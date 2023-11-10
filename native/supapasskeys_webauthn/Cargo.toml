@@ -11,3 +11,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 rustler = {version = "0.30.0", features = ["nif_version_2_17"]}
+serde_json = "1.0.108"
+thiserror = "1.0.50"
+webauthn-rs = {version = "0.4.8", features = ["danger-allow-state-serialisation"]}
