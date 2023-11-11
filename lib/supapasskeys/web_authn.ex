@@ -14,7 +14,7 @@ defmodule Supapasskeys.WebAuthn do
   defmodule RegistrationRequest do
     @type t :: %__MODULE__{
             creation_options_json: String.t(),
-            passkey_registration: String.t()
+            passkey_registration: binary()
           }
     defstruct creation_options_json: nil, passkey_registration: nil
   end

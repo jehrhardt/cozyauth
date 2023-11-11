@@ -61,5 +61,7 @@ defmodule Supapasskeys.WebAuthnTest do
              %{"alg" => -7, "type" => "public-key"},
              %{"alg" => -257, "type" => "public-key"}
            ]
+
+    assert is_binary(passkey_registration)
   end
 end

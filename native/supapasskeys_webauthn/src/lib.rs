@@ -24,7 +24,29 @@ struct User<'a> {
 #[module = "Supapasskeys.WebAuthn.RegistrationRequest"]
 struct RegistrationRequest {
     creation_options_json: String,
-    passkey_registration: String,
+    passkey_registration: PasskeyRegistration,
+}
+
+struct PasskeyRegistration {
+    data: Vec<u8>,
+}
+
+impl rustler::Encoder for PasskeyRegistration {
+    fn encode<'a>(&self, env: rustler::Env<'a>) -> rustler::Term<'a> {
+        let src = self.data.as_slice();
+        let mut binary = rustler::OwnedBinary::new(src.len()).unwrap();
+        binary.as_mut_slice().copy_from_slice(src);
+        rustler::Binary::from_owned(binary, env).encode(env)
+    }
+}
+
+impl<'a> rustler::Decoder<'a> for PasskeyRegistration {
+    fn decode(term: rustler::Term<'a>) -> Result<Self, rustler::Error> {
+        let binary: rustler::Binary<'a> = term.decode()?;
+        Ok(PasskeyRegistration {
+            data: binary.to_vec(),
+        })
+    }
 }
 
 #[derive(Error, Debug)]
@@ -73,11 +95,14 @@ fn start_passkey_registration<'a>(
                         None,
                     ) {
                         Ok((ccr, skr)) => match serde_json::to_string(&ccr.public_key) {
-                            Ok(creation_options_json) => match serde_json::to_string(&skr) {
-                                Ok(passkey_registration) => Ok(RegistrationRequest {
-                                    creation_options_json,
-                                    passkey_registration,
-                                }),
+                            Ok(creation_options_json) => match serde_cbor::to_vec(&skr) {
+                                Ok(data) => {
+                                    let passkey_registration = PasskeyRegistration { data };
+                                    Ok(RegistrationRequest {
+                                        creation_options_json,
+                                        passkey_registration,
+                                    })
+                                }
                                 Err(_e) => Err(PasskeyError::SerializePasskeyRegistration),
                             },
                             Err(_e) => Err(PasskeyError::SerializeCreationOptions),
