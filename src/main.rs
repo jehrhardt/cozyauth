@@ -7,6 +7,8 @@ use axum::{
 use futures::{sink::SinkExt, stream::StreamExt};
 use std::net::{SocketAddr, Ipv4Addr, Ipv6Addr};
 
+mod passkeys;
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
@@ -32,9 +34,22 @@ async fn register_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
 async fn websocket(stream: WebSocket) {
     let (mut sender, mut receiver) = stream.split();
 
+    let (ccr, _skr) = passkeys::start_registration(
+        passkeys::RelyingParty {
+            name: "Example".to_string(),
+            origin: "http://localhost:4000".to_string(),
+        },
+        passkeys::User {
+            id: uuid::Uuid::new_v4(),
+            name: "example".to_string(),
+            display_name: "Example".to_string(),
+        },
+    );
+
     while let Some(Ok(message)) = receiver.next().await {
-        if let Message::Text(some_message) = message {
-            let _ = sender.send(Message::Text(some_message)).await;
+        if let Message::Text(_some_message) = message {
+            let ccr_json = serde_json::to_string(&ccr.public_key).unwrap();
+            let _ = sender.send(Message::Text(ccr_json)).await;
             return;
         }
     }

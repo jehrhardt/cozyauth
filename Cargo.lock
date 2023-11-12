@@ -1048,6 +1048,7 @@ dependencies = [
  "axum",
  "futures",
  "futures-sink",
+ "serde_json",
  "tokio",
  "uuid",
  "webauthn-rs",
