@@ -5,14 +5,13 @@ use axum::{
     Router,
 };
 use futures::{sink::SinkExt, stream::StreamExt};
-use std::net::{SocketAddr, Ipv4Addr, Ipv6Addr};
+use std::net::{Ipv4Addr, Ipv6Addr, SocketAddr};
 
 mod passkeys;
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new()
-        .route("/register", get(register_handler));
+    let app = Router::new().route("/register", get(register_handler));
 
     let addr = if cfg!(debug_assertions) {
         SocketAddr::from((Ipv4Addr::LOCALHOST, 3000))
