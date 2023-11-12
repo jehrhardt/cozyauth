@@ -1,5 +1,4 @@
-use std::sync::Arc;
-
+use serde::Deserialize;
 use uuid::Uuid;
 use webauthn_rs::{
     prelude::{
@@ -14,6 +13,7 @@ pub(crate) struct RelyingParty {
     pub(crate) origin: String,
 }
 
+#[derive(Clone, Deserialize)]
 pub(crate) struct User {
     pub(crate) id: Uuid,
     pub(crate) name: String,
@@ -23,12 +23,12 @@ pub(crate) struct User {
 pub(crate) fn start_registration(
     relying_party: RelyingParty,
     user: User,
-) -> (CreationChallengeResponse, Arc<PasskeyRegistration>) {
+) -> (CreationChallengeResponse, PasskeyRegistration) {
     match init_webauthn(&relying_party) {
         Ok(webauthn) => {
             match webauthn.start_passkey_registration(user.id, &user.name, &user.display_name, None)
             {
-                Ok((ccr, skr)) => (ccr, Arc::new(skr)),
+                Ok((ccr, skr)) => (ccr, skr),
                 Err(e) => panic!("Error: {}", e),
             }
         }

@@ -1048,6 +1048,7 @@ dependencies = [
  "axum",
  "futures",
  "futures-sink",
+ "serde",
  "serde_json",
  "tokio",
  "uuid",

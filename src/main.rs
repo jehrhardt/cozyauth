@@ -5,8 +5,14 @@ use axum::{
     Router,
 };
 use futures::{sink::SinkExt, stream::StreamExt};
-use std::net::{Ipv4Addr, Ipv6Addr, SocketAddr};
+use json_rpc::{handle_json_rpc_request, JsonRpcMethod};
+use std::{
+    net::{Ipv4Addr, Ipv6Addr, SocketAddr},
+    sync::{Arc, Mutex},
+};
+use webauthn_rs::prelude::PasskeyRegistration;
 
+mod json_rpc;
 mod passkeys;
 
 #[tokio::main]
@@ -33,22 +39,34 @@ async fn register_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
 async fn websocket(stream: WebSocket) {
     let (mut sender, mut receiver) = stream.split();
 
-    let (ccr, _skr) = passkeys::start_registration(
-        passkeys::RelyingParty {
-            name: "Example".to_string(),
-            origin: "http://localhost:4000".to_string(),
-        },
-        passkeys::User {
-            id: uuid::Uuid::new_v4(),
-            name: "example".to_string(),
-            display_name: "Example".to_string(),
-        },
-    );
+    let relying_party = passkeys::RelyingParty {
+        name: "Example".to_string(),
+        origin: "http://localhost:4000".to_string(),
+    };
+
+    let passkey_registration: Arc<Mutex<Option<PasskeyRegistration>>> = Arc::new(Mutex::new(None));
+    let reg_state = passkey_registration.clone();
+    while let Some(Ok(message)) = receiver.next().await {
+        if let Message::Text(request) = message {
+            let response = handle_json_rpc_request(&request, JsonRpcMethod::START, |user| {
+                let (ccr, skr) = passkeys::start_registration(relying_party, user);
+                reg_state.lock().unwrap().replace(skr);
+                ccr
+            })
+            .await;
+            let _ = sender.send(Message::Text(response)).await;
+            return;
+        }
+    }
 
     while let Some(Ok(message)) = receiver.next().await {
-        if let Message::Text(_some_message) = message {
-            let ccr_json = serde_json::to_string(&ccr.public_key).unwrap();
-            let _ = sender.send(Message::Text(ccr_json)).await;
+        if let Message::Text(request) = message {
+            let response = handle_json_rpc_request(&request, JsonRpcMethod::FINISH, |reg| {
+                let state = passkey_registration.lock().unwrap().clone().unwrap();
+                passkeys::finish_registration(relying_party, reg, state)
+            })
+            .await;
+            let _ = sender.send(Message::Text(response)).await;
             return;
         }
     }
