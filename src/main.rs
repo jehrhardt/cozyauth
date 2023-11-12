@@ -17,7 +17,9 @@ mod passkeys;
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/register", get(register_handler));
+    let app = Router::new()
+        .route("/register", get(register_handler))
+        .route("/authentication", get(authentication_handler));
 
     let addr = if cfg!(debug_assertions) {
         SocketAddr::from((Ipv4Addr::LOCALHOST, 3000))
@@ -33,10 +35,10 @@ async fn main() {
 }
 
 async fn register_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
-    ws.on_upgrade(|socket| websocket(socket))
+    ws.on_upgrade(|socket| register_websocket(socket))
 }
 
-async fn websocket(stream: WebSocket) {
+async fn register_websocket(stream: WebSocket) {
     let (mut sender, mut receiver) = stream.split();
 
     let relying_party = passkeys::RelyingParty {
@@ -70,4 +72,12 @@ async fn websocket(stream: WebSocket) {
             return;
         }
     }
+}
+
+async fn authentication_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
+    ws.on_upgrade(|socket| authentication_websocket(socket))
+}
+
+async fn authentication_websocket(_stream: WebSocket) {
+    unimplemented!()
 }
