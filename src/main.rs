@@ -1,83 +1,51 @@
-use axum::{
-    extract::ws::{Message, WebSocket, WebSocketUpgrade},
-    response::IntoResponse,
-    routing::get,
-    Router,
-};
-use futures::{sink::SinkExt, stream::StreamExt};
-use json_rpc::{handle_json_rpc_request, JsonRpcMethod};
-use std::{
-    net::{Ipv4Addr, Ipv6Addr, SocketAddr},
-    sync::{Arc, Mutex},
-};
-use webauthn_rs::prelude::PasskeyRegistration;
+use rocket::{launch, post, routes, serde::json::Json};
+use rocket_db_pools::{Connection, Database};
+use sqlx::PgPool;
+use uuid::Uuid;
+use webauthn_rs_proto::{PublicKeyCredentialCreationOptions, RegisterPublicKeyCredential};
 
-mod json_rpc;
+use crate::types::User;
+
+mod db;
 mod passkeys;
+mod types;
 
-#[tokio::main]
-async fn main() {
-    let app = Router::new()
-        .route("/register", get(register_handler))
-        .route("/authentication", get(authentication_handler));
+#[derive(Database)]
+#[database("supapasskeys")]
+pub(crate) struct Db(PgPool);
 
-    let addr = if cfg!(debug_assertions) {
-        SocketAddr::from((Ipv4Addr::LOCALHOST, 3000))
-    } else {
-        SocketAddr::from((Ipv6Addr::UNSPECIFIED, 3000))
-    };
-
-    println!("Listening on {}", addr);
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+#[post("/", data = "<user_json>")]
+async fn start_passkey_registration(
+    mut db: Connection<Db>,
+    user_json: Json<User<'_>>,
+) -> Json<PublicKeyCredentialCreationOptions> {
+    let relying_party = db::get_relying_party(&mut **db).unwrap();
+    let user = user_json.into_inner();
+    let (ccr, skr) = passkeys::start_registration(relying_party, user);
+    db::new_passkey_registration(&mut **db, user.id, skr)
         .await
         .unwrap();
+    Json(ccr.public_key)
 }
 
-async fn register_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
-    ws.on_upgrade(|socket| register_websocket(socket))
+#[post("/<user_id>", data = "<reg>")]
+async fn finish_passkey_registration(
+    mut db: Connection<Db>,
+    user_id: Uuid,
+    reg: Json<RegisterPublicKeyCredential>,
+) -> String {
+    let relying_party = db::get_relying_party(&mut **db).unwrap();
+    let state = db::get_passkey_registration(&mut **db, user_id)
+        .await
+        .unwrap();
+    let passkey = passkeys::finish_registration(relying_party, reg.into_inner(), state);
+    format!("Passkey {} registered ✅", passkey.cred_id())
 }
 
-async fn register_websocket(stream: WebSocket) {
-    let (mut sender, mut receiver) = stream.split();
-
-    let relying_party = passkeys::RelyingParty {
-        name: "Example".to_string(),
-        origin: "http://localhost:4000".to_string(),
-    };
-
-    let passkey_registration: Arc<Mutex<Option<PasskeyRegistration>>> = Arc::new(Mutex::new(None));
-    let reg_state = passkey_registration.clone();
-    while let Some(Ok(message)) = receiver.next().await {
-        if let Message::Text(request) = message {
-            let response = handle_json_rpc_request(&request, JsonRpcMethod::START, |user| {
-                let (ccr, skr) = passkeys::start_registration(relying_party, user);
-                reg_state.lock().unwrap().replace(skr);
-                ccr
-            })
-            .await;
-            let _ = sender.send(Message::Text(response)).await;
-            return;
-        }
-    }
-
-    while let Some(Ok(message)) = receiver.next().await {
-        if let Message::Text(request) = message {
-            let response = handle_json_rpc_request(&request, JsonRpcMethod::FINISH, |reg| {
-                let state = passkey_registration.lock().unwrap().clone().unwrap();
-                passkeys::finish_registration(relying_party, reg, state)
-            })
-            .await;
-            let _ = sender.send(Message::Text(response)).await;
-            return;
-        }
-    }
-}
-
-async fn authentication_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
-    ws.on_upgrade(|socket| authentication_websocket(socket))
-}
-
-async fn authentication_websocket(_stream: WebSocket) {
-    unimplemented!()
+#[launch]
+fn rocket() -> _ {
+    rocket::build().attach(Db::init()).mount(
+        "/passkeys",
+        routes![start_passkey_registration, finish_passkey_registration],
+    )
 }

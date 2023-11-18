@@ -1,37 +1,18 @@
-use serde::Deserialize;
-use uuid::Uuid;
 use webauthn_rs::{
-    prelude::{
-        CreationChallengeResponse, Passkey, PasskeyRegistration, RegisterPublicKeyCredential, Url,
-        WebauthnError,
-    },
+    prelude::{CreationChallengeResponse, Passkey, PasskeyRegistration, Url, WebauthnError},
     Webauthn, WebauthnBuilder,
 };
+use webauthn_rs_proto::RegisterPublicKeyCredential;
 
-pub(crate) struct RelyingParty {
-    pub(crate) name: String,
-    pub(crate) origin: String,
-}
-
-#[derive(Clone, Deserialize)]
-pub(crate) struct User {
-    pub(crate) id: Uuid,
-    pub(crate) name: String,
-    pub(crate) display_name: String,
-}
+use crate::types::{RelyingParty, User};
 
 pub(crate) fn start_registration(
     relying_party: RelyingParty,
-    user: User,
+    user: User<'_>,
 ) -> (CreationChallengeResponse, PasskeyRegistration) {
-    match init_webauthn(&relying_party) {
-        Ok(webauthn) => {
-            match webauthn.start_passkey_registration(user.id, &user.name, &user.display_name, None)
-            {
-                Ok((ccr, skr)) => (ccr, skr),
-                Err(e) => panic!("Error: {}", e),
-            }
-        }
+    let webauthn = init_webauthn(&relying_party).unwrap();
+    match webauthn.start_passkey_registration(user.id, user.name, user.display_name, None) {
+        Ok((ccr, skr)) => (ccr, skr),
         Err(e) => panic!("Error: {}", e),
     }
 }
@@ -41,11 +22,9 @@ pub(crate) fn finish_registration(
     reg: RegisterPublicKeyCredential,
     state: PasskeyRegistration,
 ) -> Passkey {
-    match init_webauthn(&relying_party) {
-        Ok(webauthn) => match webauthn.finish_passkey_registration(&reg, &state) {
-            Ok(passkey) => passkey,
-            Err(e) => panic!("Error: {}", e),
-        },
+    let webauthn = init_webauthn(&relying_party).unwrap();
+    match webauthn.finish_passkey_registration(&reg, &state) {
+        Ok(passkey) => passkey,
         Err(e) => panic!("Error: {}", e),
     }
 }
@@ -53,8 +32,7 @@ pub(crate) fn finish_registration(
 fn init_webauthn(relying_party: &RelyingParty) -> Result<Webauthn, WebauthnError> {
     let rp_origin = Url::parse(&relying_party.origin).unwrap();
     let rp_id = rp_origin.domain().unwrap();
-    match WebauthnBuilder::new(rp_id, &rp_origin) {
-        Ok(builder) => builder.rp_name(&relying_party.name).build(),
-        Err(e) => panic!("Error: {}", e),
-    }
+    WebauthnBuilder::new(rp_id, &rp_origin)
+        .map(|builder| builder.rp_name(&relying_party.name).build())
+        .unwrap()
 }
