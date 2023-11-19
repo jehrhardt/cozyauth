@@ -1,0 +1,2 @@
+[debug.databases.supapasskeys]
+url = "postgres://postgres:postgres@localhost/supapasskeys"
