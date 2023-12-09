@@ -19,5 +19,5 @@ To start local server:
 Now you can start a Passkey registration via `curl`:
 
 ```bash
-curl -X POST -i -H "Content-Type: application/json" -d '{"id": "2bd11802-1fe3-4260-b741-482082226348", "name": "jan.ehrhardt@gmail.com", "display_name": "Jan"}' http://localhost:8000/passkeys/
+curl -X POST -i -H "Content-Type: application/json" -d '{"id": "2bd11802-1fe3-4260-b741-482082226348", "name": "jan.ehrhardt@gmail.com", "display_name": "Jan"}' http://localhost:3000/
 ```

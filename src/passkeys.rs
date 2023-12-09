@@ -8,10 +8,10 @@ use crate::types::{RelyingParty, User};
 
 pub(crate) fn start_registration(
     relying_party: RelyingParty,
-    user: User<'_>,
+    user: User,
 ) -> (CreationChallengeResponse, PasskeyRegistration) {
     let webauthn = init_webauthn(&relying_party).unwrap();
-    match webauthn.start_passkey_registration(user.id, user.name, user.display_name, None) {
+    match webauthn.start_passkey_registration(user.id, &user.name, &user.display_name, None) {
         Ok((ccr, skr)) => (ccr, skr),
         Err(e) => panic!("Error: {}", e),
     }
