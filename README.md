@@ -7,13 +7,12 @@ This extension is currently under development. If you are interested, get in tou
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Rust](https://www.rust-lang.org/tools/install)
-- [sqlx CLI](https://github.com/launchbadge/sqlx/tree/main/sqlx-cli#install)
 
 ## Usage
 To start local server:
 
  - Launch DB with `docker-compose up -d`
- - Apply migrations with `sqlx migrate run --database-url postgres://postgres:postgres@localhost/supapasskeys`
+ - Apply migrations with `DATABASE_URL=postgres://postgres:postgres@localhost/supapasskeys cargo run -- up` in `migration` directory
  - Start Supapasskeys with `cargo run`
 
 Now you can start a Passkey registration via `curl`:
