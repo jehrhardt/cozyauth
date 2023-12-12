@@ -9,25 +9,24 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Registration::Table)
+                    .table(Server::Table)
                     .if_not_exists()
+                    .col(ColumnDef::new(Server::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(Server::RelyingPartyName).string().not_null())
                     .col(
-                        ColumnDef::new(Registration::Id)
-                            .uuid()
-                            .not_null()
-                            .primary_key(),
+                        ColumnDef::new(Server::RelyingPartyOrigin)
+                            .string()
+                            .not_null(),
                     )
-                    .col(ColumnDef::new(Registration::UserId).uuid().not_null())
-                    .col(ColumnDef::new(Registration::State).json_binary().not_null())
                     .col(
-                        ColumnDef::new(Registration::CreatedAt)
+                        ColumnDef::new(Server::CreatedAt)
                             .timestamp_with_time_zone()
                             .not_null()
                             .clone()
                             .default(Expr::current_timestamp()),
                     )
                     .col(
-                        ColumnDef::new(Registration::UpdatedAt)
+                        ColumnDef::new(Server::UpdatedAt)
                             .timestamp_with_time_zone()
                             .not_null()
                             .clone()
@@ -40,18 +39,17 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Registration::Table).to_owned())
+            .drop_table(Table::drop().table(Server::Table).to_owned())
             .await
     }
 }
 
 #[derive(DeriveIden)]
-pub(crate) enum Registration {
+pub(crate) enum Server {
     Table,
     Id,
-    UserId,
-    State,
-    ServerId,
+    RelyingPartyName,
+    RelyingPartyOrigin,
     CreatedAt,
     UpdatedAt,
 }

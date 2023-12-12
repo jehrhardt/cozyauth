@@ -7,6 +7,7 @@ use crate::api::{finish_passkey_registration, start_passkey_registration};
 
 mod api;
 mod db;
+mod models;
 mod passkeys;
 mod types;
 
