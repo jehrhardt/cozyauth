@@ -51,7 +51,6 @@ pub(crate) enum Registration {
     Id,
     UserId,
     State,
-    ServerId,
     CreatedAt,
     UpdatedAt,
 }

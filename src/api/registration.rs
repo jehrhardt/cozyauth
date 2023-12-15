@@ -3,14 +3,13 @@ use axum::{
     Json,
 };
 use serde_json::{json, Value};
-use sqlx::PgPool;
 use uuid::Uuid;
 use webauthn_rs_proto::{PublicKeyCredentialCreationOptions, RegisterPublicKeyCredential};
 
-use crate::{db, passkeys, types::User};
+use crate::{app, db, passkeys, types::User};
 
-pub(crate) async fn start_passkey_registration(
-    State(pool): State<PgPool>,
+pub(crate) async fn create(
+    State(pool): State<app::State>,
     Json(user): Json<User>,
 ) -> Json<PublicKeyCredentialCreationOptions> {
     let mut conn = pool.acquire().await.unwrap();
@@ -22,9 +21,9 @@ pub(crate) async fn start_passkey_registration(
     Json(ccr.public_key)
 }
 
-pub(crate) async fn finish_passkey_registration(
-    State(pool): State<PgPool>,
-    Path(user_id): Path<Uuid>,
+pub(crate) async fn update(
+    State(pool): State<app::State>,
+    Path(registration_hash): Path<String>,
     Json(reg): Json<RegisterPublicKeyCredential>,
 ) -> Json<Value> {
     let mut conn = pool.acquire().await.unwrap();

@@ -19,3 +19,4 @@ tokio = { version = "1.35.0", features = ["full"] }
 uuid = { version = "1.6.1", features = ["v4"] }
 webauthn-rs = { version = "0.4.8", features = ["danger-allow-state-serialisation"] }
 webauthn-rs-proto = "0.4.9"
+figment = { version = "0.10.12", features = ["env", "toml"] }
