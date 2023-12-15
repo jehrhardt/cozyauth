@@ -9,3 +9,7 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+Supapasskeys.Repo.insert!(%Supapasskeys.Supabase.SupabaseProject{
+  project_id: "supapasskeys",
+  database_url: "ecto://postgres:postgres@127.0.0.1:54322/postgres"
+})
