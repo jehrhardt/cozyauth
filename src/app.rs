@@ -1,24 +1,22 @@
-use std::time::Duration;
-
-use axum::Router;
 use figment::{
     providers::{Env, Format, Toml},
     Figment,
 };
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use serde::Deserialize;
-use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
-
-use crate::api::routes::routes;
+use std::time::Duration;
 
 #[derive(Debug, Clone, PartialEq, Deserialize)]
-struct Config {
+pub struct Config {
     database_url: String,
+    pub relying_party_name: String,
+    pub relying_party_origin: String,
 }
 
 #[derive(Clone)]
-pub(crate) struct State {
-    pub(crate) config: Config,
-    pub(crate) pool: Pool<Postgres>,
+pub struct Context {
+    pub config: Config,
+    pub db: DatabaseConnection,
 }
 
 fn load_config() -> Config {
@@ -28,18 +26,19 @@ fn load_config() -> Config {
     figment.extract().unwrap()
 }
 
-async fn connect_to_database(config: &Config) -> Pool<Postgres> {
-    PgPoolOptions::new()
-        .max_connections(5)
+async fn connect_to_database(config: &Config) -> DatabaseConnection {
+    let mut opt = ConnectOptions::new(config.database_url.as_str());
+    opt.max_connections(5)
         .acquire_timeout(Duration::from_secs(3))
-        .connect(&config.database_url)
+        .sqlx_logging(true);
+
+    Database::connect(opt)
         .await
         .expect("can't connect to database")
 }
 
-pub async fn start() -> Router<State> {
+pub async fn create_context() -> Context {
     let config = load_config();
-    let pool = connect_to_database(&config).await;
-    let state = State { config, pool };
-    routes().with_state(state)
+    let db = connect_to_database(&config).await;
+    Context { config, db }
 }

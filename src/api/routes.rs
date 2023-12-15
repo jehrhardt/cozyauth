@@ -5,11 +5,11 @@ use axum::{
     Router,
 };
 
-pub(crate) fn routes() -> Router<app::State> {
+pub fn mount() -> Router<app::Context> {
     Router::new()
         .route("/passkeys", post(registration::create))
         .route(
-            "/passkeys/registrations/:registration_hash",
+            "/passkeys/registrations/:registration_id",
             patch(registration::update),
         )
 }
