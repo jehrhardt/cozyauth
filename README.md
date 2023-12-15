@@ -6,6 +6,7 @@ Easy Passkey authentication for Supabase.
   * [Docker](https://docs.docker.com/get-docker/)
   * [Supabase CLI](https://supabase.io/docs/guides/cli)
   * [Elixir](https://elixir-lang.org/install.html)
+  * [Rust](https://www.rust-lang.org/tools/install)
 
 ## Usage
 To start local server:
