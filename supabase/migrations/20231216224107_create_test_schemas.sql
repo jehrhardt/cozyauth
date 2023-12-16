@@ -1,0 +1,2 @@
+CREATE SCHEMA IF NOT EXISTS public_test;
+CREATE SCHEMA IF NOT EXISTS supapasskeys_test;

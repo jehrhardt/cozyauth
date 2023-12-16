@@ -69,9 +69,7 @@ defmodule SupapasskeysWeb.SupabaseProjectControllerTest do
 
     test "renders errors when data is invalid", %{conn: conn, supabase_project: supabase_project} do
       conn =
-        put(conn, ~p"/supabase/projects/#{supabase_project}",
-          supabase_project: @invalid_attrs
-        )
+        put(conn, ~p"/supabase/projects/#{supabase_project}", supabase_project: @invalid_attrs)
 
       assert json_response(conn, 422)["errors"] != %{}
     end
