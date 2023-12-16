@@ -1,6 +1,4 @@
-
 version: '3.8'
-
 services:
   db:
     image: postgres:15
@@ -9,4 +7,4 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "127.0.0.1:5432:5432"
+      - 127.0.0.1:5432:5432

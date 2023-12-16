@@ -1,6 +1,8 @@
 # Supapasskeys
 Easy Passkey authentication for Supabase.
 
+This extension is currently under development. If you are interested, get in touch with us on [our Discord](https://discord.gg/QaCTXq2Gxm).
+
 ## Prerequisites
 
   * [Docker](https://docs.docker.com/get-docker/)
