@@ -11,18 +11,6 @@ config :supapasskeys, Supapasskeys.Repo,
   pool_size: 10,
   after_connect: {Postgrex, :query!, ["SET search_path TO public_test", []]}
 
-# Configure your Supabase database to store Passkeys
-config :supapasskeys, Supapasskeys.SupabaseRepo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  port: 54329,
-  database: "postgres",
-  stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 1,
-  after_connect: {Postgrex, :query!, ["SET search_path TO supapasskeys_test", []]}
-
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :supapasskeys, SupapasskeysWeb.Endpoint,

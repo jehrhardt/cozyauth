@@ -11,19 +11,6 @@ config :supapasskeys, Supapasskeys.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-# Configure your Supabase database to store Passkeys
-# This is used via a pooler like pgbouncer or Supavisor
-config :supapasskeys, Supapasskeys.SupabaseRepo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  port: 54329,
-  database: "postgres",
-  stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 1,
-  after_connect: {Postgrex, :query!, ["SET search_path TO supapasskeys", []]}
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
