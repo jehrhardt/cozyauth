@@ -9,7 +9,12 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-Supapasskeys.Repo.insert!(%Supapasskeys.Supabase.SupabaseProject{
-  project_id: "supapasskeys",
-  database_url: "ecto://postgres:postgres@127.0.0.1:54322/postgres"
+Supapasskeys.Servers.create_server(%{
+  port: 54329,
+  user: "postgres",
+  host: "localhost",
+  password: "postgres",
+  database_name: "postgrea",
+  relying_party_url: "http://localhost:4000",
+  relying_party_name: "Supapasskeys"
 })
