@@ -11,6 +11,7 @@ defmodule Supapasskeys.Repo.Migrations.CreateServers do
       add :password, :string
       add :relying_party_url, :string
       add :relying_party_name, :string
+      add :migrated_at, :utc_datetime
 
       timestamps(type: :utc_datetime)
     end

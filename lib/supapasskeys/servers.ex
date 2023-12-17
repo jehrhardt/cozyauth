@@ -102,13 +102,15 @@ defmodule Supapasskeys.Servers do
     Server.changeset(server, attrs)
   end
 
-  def migrate_server(%Server{
-        user: user,
-        password: password,
-        host: host,
-        database_name: database_name,
-        port: port
-      }) do
+  def migrate_server(
+        %Server{
+          user: user,
+          password: password,
+          host: host,
+          database_name: database_name,
+          port: port
+        } = server
+      ) do
     default_dynamic_repo = Supapasskeys.ServerRepo.get_dynamic_repo()
 
     {:ok, repo} =
@@ -128,5 +130,8 @@ defmodule Supapasskeys.Servers do
       Supapasskeys.ServerRepo.put_dynamic_repo(default_dynamic_repo)
       Supervisor.stop(repo)
     end
+
+    change_server(server, %{migrated_at: DateTime.utc_now()})
+    |> Repo.update()
   end
 end

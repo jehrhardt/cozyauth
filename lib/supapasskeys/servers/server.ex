@@ -12,6 +12,7 @@ defmodule Supapasskeys.Servers.Server do
     field :database_name, :string
     field :relying_party_url, :string
     field :relying_party_name, :string
+    field :migrated_at, :utc_datetime
 
     timestamps(type: :utc_datetime)
   end
@@ -26,7 +27,8 @@ defmodule Supapasskeys.Servers.Server do
       :user,
       :password,
       :relying_party_url,
-      :relying_party_name
+      :relying_party_name,
+      :migrated_at
     ])
     |> validate_required([
       :host,
