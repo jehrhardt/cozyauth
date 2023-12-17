@@ -10,7 +10,6 @@ defmodule Supapasskeys.Application do
     children = [
       SupapasskeysWeb.Telemetry,
       Supapasskeys.Repo,
-      Supapasskeys.ServerRepo,
       {DNSCluster, query: Application.get_env(:supapasskeys, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Supapasskeys.PubSub},
       # Start the Finch HTTP client for sending emails

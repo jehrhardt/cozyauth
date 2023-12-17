@@ -101,4 +101,32 @@ defmodule Supapasskeys.Servers do
   def change_server(%Server{} = server, attrs \\ %{}) do
     Server.changeset(server, attrs)
   end
+
+  def migrate_server(%Server{
+        user: user,
+        password: password,
+        host: host,
+        database_name: database_name,
+        port: port
+      }) do
+    default_dynamic_repo = Supapasskeys.ServerRepo.get_dynamic_repo()
+
+    {:ok, repo} =
+      Supapasskeys.ServerRepo.start_link(
+        name: nil,
+        username: user,
+        password: password,
+        hostname: host,
+        database: database_name,
+        port: port
+      )
+
+    try do
+      Supapasskeys.ServerRepo.put_dynamic_repo(repo)
+      Ecto.Migrator.run(Supapasskeys.ServerRepo, :up, all: true, prefix: :supapasskeys)
+    after
+      Supapasskeys.ServerRepo.put_dynamic_repo(default_dynamic_repo)
+      Supervisor.stop(repo)
+    end
+  end
 end
