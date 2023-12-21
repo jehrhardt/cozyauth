@@ -1,6 +1,9 @@
 use clap::{Parser, Subcommand};
 
-use crate::{app::{migrate_database, start_server}, config::load_config};
+use crate::{
+    app::{migrate_database, start_server},
+    config::load_config,
+};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
