@@ -5,5 +5,8 @@ target/
 Cargo.toml.orig
 Cargo.lock.orig
 
+# RustRover config
+.idea/
+
 # Static assets
 node_modules/
