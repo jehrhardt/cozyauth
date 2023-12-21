@@ -1,17 +1,8 @@
-use figment::{
-    providers::{Env, Format, Toml},
-    Figment,
-};
+use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use serde::Deserialize;
 use std::time::Duration;
 
-#[derive(Debug, Clone, PartialEq, Deserialize)]
-pub struct Config {
-    database_url: String,
-    pub relying_party_name: String,
-    pub relying_party_origin: String,
-}
+use crate::{api, config::Config};
 
 #[derive(Clone)]
 pub struct Context {
@@ -19,15 +10,8 @@ pub struct Context {
     pub db: DatabaseConnection,
 }
 
-fn load_config() -> Config {
-    let figment = Figment::new()
-        .merge(Toml::file("Supapasskeys.toml"))
-        .merge(Env::prefixed("SUPAPASSKEYS"));
-    figment.extract().unwrap()
-}
-
-async fn connect_to_database(config: &Config) -> DatabaseConnection {
-    let mut opt = ConnectOptions::new(config.database_url.as_str());
+async fn connect_to_database(config: Config) -> DatabaseConnection {
+    let mut opt = ConnectOptions::new(config.database_url);
     opt.max_connections(5)
         .acquire_timeout(Duration::from_secs(3))
         .sqlx_logging(true);
@@ -37,8 +21,20 @@ async fn connect_to_database(config: &Config) -> DatabaseConnection {
         .expect("can't connect to database")
 }
 
-pub async fn create_context() -> Context {
-    let config = load_config();
-    let db = connect_to_database(&config).await;
-    Context { config, db }
+pub(crate) async fn migrate_database(config: Config) {
+    let db = connect_to_database(config).await;
+    Migrator::up(&db, None)
+        .await
+        .expect("can't migrate database");
+}
+
+pub(crate) async fn start_server(config: Config) {
+    let db = connect_to_database(config).await;
+    let context = Context { config, db };
+    let app = api::routes::mount().with_state(context);
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+        .await
+        .unwrap();
+    println!("listening on {}", listener.local_addr().unwrap());
+    axum::serve(listener, app).await.unwrap();
 }
