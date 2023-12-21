@@ -38,6 +38,7 @@ pub(crate) async fn start_server(config: Config) {
     let context = Context { config, db };
     let app = Router::new()
         .route("/sign-in", get(pages::sign_in::render_page))
+        .route("/sign-in", post(pages::sign_in::handle_form_submission))
         .route("/passkeys", post(api::registration::create))
         .route(
             "/passkeys/registrations/:registration_id",
