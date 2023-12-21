@@ -1,5 +1,5 @@
 use axum::{
-    routing::{patch, post, get},
+    routing::{get, patch, post},
     Router,
 };
 use migration::{Migrator, MigratorTrait};
@@ -37,7 +37,7 @@ pub(crate) async fn start_server(config: Config) {
     let db = connect_to_database(config.clone()).await;
     let context = Context { config, db };
     let app = Router::new()
-    .route("/sign-in", get(pages::sign_in::render_page))
+        .route("/sign-in", get(pages::sign_in::render_page))
         .route("/passkeys", post(api::registration::create))
         .route(
             "/passkeys/registrations/:registration_id",

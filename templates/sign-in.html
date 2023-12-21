@@ -12,6 +12,9 @@
     <Form method="post">
       <label>
         Email:
+        {% if errors.as_ref().is_some() ~%}
+        <span>{{ errors.as_ref().unwrap().email }}</span>
+        {%~ endif %}
         <input name="email" type="email" />
       </label>
       <br />
