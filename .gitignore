@@ -1,7 +1,10 @@
-
 # Rust
 target/
 
 # Generated files
 Cargo.toml.orig
 Cargo.lock.orig
+
+# Static assets
+node_modules/
+assets/*js

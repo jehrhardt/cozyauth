@@ -1,0 +1,14 @@
+{
+  "name": "supapasskeys",
+  "version": "0.1.0",
+  "description": "Easy Passkey authentication for Supabase.",
+  "private": true,
+  "author": "Jan Ehrhardt <59441+jehrhardt@users.noreply.github.com>",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "htmx.org": "^1.9.9"
+  },
+  "scripts": {
+    "postinstall": "cp node_modules/htmx.org/dist/htmx.min.js assets/htmx.min.js"
+  }
+}
