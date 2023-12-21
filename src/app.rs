@@ -29,7 +29,7 @@ pub(crate) async fn migrate_database(config: Config) {
 }
 
 pub(crate) async fn start_server(config: Config) {
-    let db = connect_to_database(config).await;
+    let db = connect_to_database(config.clone()).await;
     let context = Context { config, db };
     let app = api::routes::mount().with_state(context);
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")

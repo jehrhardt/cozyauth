@@ -17,7 +17,7 @@ enum Commands {
 
 pub async fn run() {
     let cli = Cli::parse();
-    let config = load_config("development");
+    let config = load_config("dev");
     match cli.command {
         Commands::Migrate => migrate_database(config).await,
         Commands::Serve => start_server(config).await,
