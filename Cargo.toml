@@ -11,11 +11,11 @@ edition = "2021"
 [dependencies]
 migration = { path = "migration" }
 axum = "0.7.2"
-sea-orm = { version = "0.12.9", features = ["debug-print", "runtime-tokio-rustls", "sqlx-postgres", "with-json", "with-uuid"] }
+sea-orm = { version = "0.12.10", features = ["debug-print", "runtime-tokio-rustls", "sqlx-postgres", "with-json", "with-uuid"] }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.108"
 sqlx = { version = "0.7.3", features = ["runtime-tokio-rustls", "any", "postgres", "migrate", "uuid"] }
-tokio = { version = "1.35.0", features = ["full"] }
+tokio = { version = "1.35.1", features = ["full"] }
 uuid = { version = "1.6.1", features = ["v4"] }
 webauthn-rs = { version = "0.4.8", features = ["danger-allow-state-serialisation"] }
 webauthn-rs-proto = "0.4.9"
