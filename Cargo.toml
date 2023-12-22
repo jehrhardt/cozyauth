@@ -11,7 +11,7 @@ edition = "2021"
 [dependencies]
 migration = { path = "migration" }
 axum = "0.7.2"
-sea-orm = { version = "0.12.9", features = ["debug-print", "runtime-tokio-rustls", "sqlx-postgres", "with-json", "with-uuid"] }
+sea-orm = { version = "0.12.10", features = ["debug-print", "runtime-tokio-rustls", "sqlx-postgres", "with-json", "with-uuid"] }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.108"
 sqlx = { version = "0.7.3", features = ["runtime-tokio-rustls", "any", "postgres", "migrate", "uuid"] }
