@@ -27,7 +27,7 @@ config :supapasskeys, SupapasskeysWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Supapasskeys.PubSub,
-  live_view: [signing_salt: "jdFOpYa/"]
+  live_view: [signing_salt: "bzXbt4Gr"]
 
 # Configures the mailer
 #

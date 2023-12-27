@@ -15,7 +15,7 @@ config :supapasskeys, Supapasskeys.Repo,
 # you can enable the server option below.
 config :supapasskeys, SupapasskeysWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "mNaJ5iTXAGuw6eWP9m7WFI/PkCPK3eDFEgMs0W/z5flsp2pqgppYM/7pj1Yu17Uv",
+  secret_key_base: "61AhSD3sgRANJBHi4k7wvz9vD0fBvHfIlEoWXsouAd99tmWnWOzRHk5wQ7v5dT2N",
   server: false
 
 # In test we don't send emails.

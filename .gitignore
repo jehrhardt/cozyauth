@@ -35,5 +35,5 @@ supapasskeys-*.tar
 npm-debug.log
 /assets/node_modules/
 
-# Ignore Rustler build artifacts.
+# Rustler native artifacts.
 priv/native/

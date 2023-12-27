@@ -24,7 +24,7 @@ config :supapasskeys, SupapasskeysWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "gy4dOrW6xHpl/tiM7Pd8utPXuxA+uyxA6grDFPd5rY0q+BHYJ7w5ByelSkI9qGxA",
+  secret_key_base: "9GypgaimR9xrFvlRbFv57S+US1w9XdrBsH6PCjJmptgXTp/2xm6ZmPpofD3DuNsw",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}

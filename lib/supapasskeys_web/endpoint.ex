@@ -7,7 +7,7 @@ defmodule SupapasskeysWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_supapasskeys_key",
-    signing_salt: "Vyf6M1eR",
+    signing_salt: "cASnvmWU",
     same_site: "Lax"
   ]
 

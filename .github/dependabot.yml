@@ -4,11 +4,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "mix"
+  - package-ecosystem: "cargo"
     directory: "/"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "cargo"
+  - package-ecosystem: "mix"
     directory: "/"
     schedule:
       interval: "weekly"
