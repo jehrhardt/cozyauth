@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "name": "supapasskeys",
+      "path": "./"
+    },
+    {
+      "name": "supabpasskeys_webauthn",
+      "path": "native/supapasskeys_webauthn"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "native/supapasskeys_webauthn/": true
+    }
+  }
+}
