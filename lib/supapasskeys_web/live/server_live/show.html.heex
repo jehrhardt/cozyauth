@@ -1,0 +1,37 @@
+<.header>
+  Server <%= @server.id %>
+  <:subtitle>This is a server record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/servers/#{@server}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit server</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Host"><%= @server.host %></:item>
+  <:item title="Database name"><%= @server.database_name %></:item>
+  <:item title="Port"><%= @server.port %></:item>
+  <:item title="User"><%= @server.user %></:item>
+  <:item title="Password"><%= @server.password %></:item>
+  <:item title="Relying party url"><%= @server.relying_party_url %></:item>
+  <:item title="Relying party name"><%= @server.relying_party_name %></:item>
+</.list>
+
+<.back navigate={~p"/servers"}>Back to servers</.back>
+
+<.modal
+  :if={@live_action == :edit}
+  id="server-modal"
+  show
+  on_cancel={JS.patch(~p"/servers/#{@server}")}
+>
+  <.live_component
+    module={SupapasskeysWeb.ServerLive.FormComponent}
+    id={@server.id}
+    title={@page_title}
+    action={@live_action}
+    server={@server}
+    patch={~p"/servers/#{@server}"}
+  />
+</.modal>
