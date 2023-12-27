@@ -1,17 +1,17 @@
 {
   "folders": [
     {
-      "name": "project-root",
+      "name": "supapasskeys",
       "path": "./"
     },
     {
-      "name": "supabase-functions",
-      "path": "supabase/functions"
+      "name": "supabpasskeys_webauthn",
+      "path": "native/supapasskeys_webauthn"
     }
   ],
   "settings": {
     "files.exclude": {
-      "supabase/functions/": true
+      "native/supapasskeys_webauthn/": true
     }
   }
 }
