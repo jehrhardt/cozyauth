@@ -18,13 +18,6 @@ defmodule SupapasskeysWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-
-    live "/servers", ServerLive.Index, :index
-    live "/servers/new", ServerLive.Index, :new
-    live "/servers/:id/edit", ServerLive.Index, :edit
-
-    live "/servers/:id", ServerLive.Show, :show
-    live "/servers/:id/show/edit", ServerLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
