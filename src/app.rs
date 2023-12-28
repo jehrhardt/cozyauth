@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, patch, post},
+    routing::{patch, post},
     Router,
 };
 use migration::{Migrator, MigratorTrait};
@@ -7,7 +7,7 @@ use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::time::Duration;
 use tower_http::services::ServeFile;
 
-use crate::{api, config::Config, pages};
+use crate::{api, config::Config};
 
 #[derive(Clone)]
 pub struct Context {
@@ -37,16 +37,10 @@ pub(crate) async fn start_server(config: Config) {
     let db = connect_to_database(config.clone()).await;
     let context = Context { config, db };
     let app = Router::new()
-        .route("/sign-in", get(pages::sign_in::render_page))
-        .route("/sign-in", post(pages::sign_in::handle_form_submission))
         .route("/passkeys", post(api::registration::create))
         .route(
             "/passkeys/registrations/:registration_id",
             patch(api::registration::update),
-        )
-        .nest_service(
-            "/assets/htmx.js",
-            ServeFile::new("node_modules/htmx.org/dist/htmx.min.js"),
         )
         .with_state(context);
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
