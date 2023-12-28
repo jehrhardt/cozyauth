@@ -2973,7 +2973,6 @@ name = "supapasskeys"
 version = "0.1.0"
 dependencies = [
  "axum",
- "clap",
  "figment",
  "migration",
  "sea-orm",

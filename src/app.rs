@@ -6,33 +6,37 @@ use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::time::Duration;
 
-use crate::{api, config::Config};
+use crate::{
+    api,
+    config::{load_config, Config},
+};
 
 #[derive(Clone)]
-pub struct Context {
-    pub config: Config,
-    pub db: DatabaseConnection,
+pub(crate) struct Context {
+    pub(crate) config: Config,
+    pub(crate) db: DatabaseConnection,
 }
 
 async fn connect_to_database(config: Config) -> DatabaseConnection {
     let mut opt = ConnectOptions::new(config.database_url);
     opt.max_connections(5)
         .acquire_timeout(Duration::from_secs(3))
-        .sqlx_logging(true);
+        .sqlx_logging(true)
+        .set_schema_search_path("supapasskeys");
 
     Database::connect(opt)
         .await
         .expect("can't connect to database")
 }
 
-pub(crate) async fn migrate_database(config: Config) {
+async fn migrate_database(config: Config) {
     let db = connect_to_database(config).await;
     Migrator::up(&db, None)
         .await
         .expect("can't migrate database");
 }
 
-pub(crate) async fn start_server(config: Config) {
+async fn start_server(config: Config) {
     let db = connect_to_database(config.clone()).await;
     let context = Context { config, db };
     let app = Router::new()
@@ -47,4 +51,10 @@ pub(crate) async fn start_server(config: Config) {
         .unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
+}
+
+pub async fn start() {
+    let config = load_config();
+    migrate_database(config.clone()).await;
+    start_server(config).await;
 }

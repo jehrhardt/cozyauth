@@ -11,9 +11,9 @@ pub(crate) struct Config {
     pub(crate) relying_party_origin: String,
 }
 
-pub(crate) fn load_config(environment: &str) -> Config {
+pub(crate) fn load_config() -> Config {
     let figment = Figment::new()
-        .merge(Toml::file(format!("config/{}.toml", environment)))
+        .merge(Toml::file("Supapasskeys.toml"))
         .merge(Env::prefixed("SUPAPASSKEYS"));
     figment.extract().unwrap()
 }
