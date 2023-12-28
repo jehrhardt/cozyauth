@@ -5,7 +5,6 @@ use axum::{
 use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::time::Duration;
-use tower_http::services::ServeFile;
 
 use crate::{api, config::Config};
 
