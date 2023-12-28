@@ -14,6 +14,6 @@ pub(crate) struct Config {
 pub(crate) fn load_config() -> Config {
     let figment = Figment::new()
         .merge(Toml::file("Supapasskeys.toml"))
-        .merge(Env::prefixed("SUPAPASSKEYS"));
+        .merge(Env::prefixed("SUPAPASSKEYS_"));
     figment.extract().unwrap()
 }
