@@ -97,11 +97,17 @@ relying party (e.g. `http://localhost:3000`).
 
 ## Development
 
+### Prerequisites
+
 Supapasskeys requires the following tools to be installed on your system:
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Supabase CLI](https://supabase.com/docs/guides/cli)
 - [Rust](https://www.rust-lang.org/tools/install)
+- [Node.js](https://nodejs.org/en/download/)
+- [deno](https://deno.land/manual/getting_started/installation)
+
+### Setup
 
 Start the local Supabase instance:
 
@@ -109,8 +115,28 @@ Start the local Supabase instance:
 supabase start
 ```
 
+Install dependencies:
+
+```bash
+npm install
+```
+
+### Launch application
+
+Start Supapasskeys:
+
+```bash
+npm run dev
+```
+
+You can now open the application in your browser at http://localhost:8000.
+
+### Launch API
+
 Start the Supapasskeys API:
 
 ```bash
 cargo run
 ```
+
+You can now access the API at http://localhost:3000.
