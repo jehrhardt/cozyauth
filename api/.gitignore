@@ -1,0 +1,9 @@
+# Rust
+target/
+
+# Generated files
+Cargo.toml.orig
+Cargo.lock.orig
+
+# RustRover config
+.idea/

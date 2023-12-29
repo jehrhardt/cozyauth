@@ -1,5 +1,21 @@
-# Ignore target directory
-target/
+# Ignore node_modules directory
+node_modules/
 
-# Ignore Supabase config
-supabase/
+# Ignore npm debug log
+npm-debug.log
+
+# Ignore yarn debug log
+yarn-debug.log
+
+# Ignore yarn error log
+yarn-error.log
+
+# Ignore .env file (if used)
+.env
+
+# Ignore Remix files
+.cache
+build/
+
+# Ignore api directory
+api/

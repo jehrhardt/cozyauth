@@ -1,12 +1,9 @@
-# Rust
-target/
+node_modules
 
-# Generated files
-Cargo.toml.orig
-Cargo.lock.orig
-
-# RustRover config
-.idea/
-
-# .env file (contains secret keys)
+/.cache
+/build
+/public/build
 .env
+
+# deno lock file
+deno.lock

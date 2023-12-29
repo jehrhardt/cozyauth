@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "name": "supapasskeys",
+      "path": "./"
+    },
+    {
+      "name": "supapasskeys-api",
+      "path": "api"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "api/": true
+    }
+  }
+}
