@@ -1,5 +1,5 @@
 # Use the official Rust image as the base image
-FROM rust:latest AS builder
+FROM rust:1.75.0-bookworm AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
