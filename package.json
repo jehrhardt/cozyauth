@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "supapasskeys",
   "private": true,
   "sideEffects": false,
   "scripts": {
@@ -8,8 +8,8 @@
     "dev": "npm-run-all build --parallel \"dev:*\"",
     "dev:deno": "cross-env NODE_ENV=development deno run --unstable --watch --allow-net --allow-read --allow-env ./build/index.js",
     "dev:remix": "remix watch",
-    "format": "deno fmt --ignore=node_modules,build,public/build",
-    "lint": "deno lint --ignore=node_modules,build,public/build",
+    "format": "deno fmt --ignore=node_modules,build,public/build,api",
+    "lint": "deno lint --ignore=node_modules,build,public/build,api",
     "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js",
     "typecheck": "deno check"
   },
