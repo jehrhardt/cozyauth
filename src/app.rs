@@ -4,7 +4,7 @@ use axum::{
 };
 use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use std::time::Duration;
+use std::{time::Duration, net::{Ipv4Addr, SocketAddrV4}};
 
 use crate::{
     api,
@@ -46,7 +46,13 @@ async fn start_server(config: Config) {
             patch(api::registration::update),
         )
         .with_state(context);
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    let ip_address = if cfg!(debug_assertions) {
+        Ipv4Addr::LOCALHOST
+    } else {
+        Ipv4Addr::UNSPECIFIED
+    };
+    let address = SocketAddrV4::new(ip_address, 3000);
+    let listener = tokio::net::TcpListener::bind(address)
         .await
         .unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
