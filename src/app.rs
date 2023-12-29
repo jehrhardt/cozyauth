@@ -4,7 +4,10 @@ use axum::{
 };
 use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use std::{time::Duration, net::{Ipv4Addr, SocketAddrV4}};
+use std::{
+    net::{Ipv4Addr, SocketAddrV4},
+    time::Duration,
+};
 
 use crate::{
     api,
@@ -52,9 +55,7 @@ async fn start_server(config: Config) {
         Ipv4Addr::UNSPECIFIED
     };
     let address = SocketAddrV4::new(ip_address, 3000);
-    let listener = tokio::net::TcpListener::bind(address)
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind(address).await.unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
