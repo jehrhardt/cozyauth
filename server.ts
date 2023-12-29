@@ -9,4 +9,10 @@ const remixHandler = createRequestHandlerWithStaticFiles({
 });
 
 const port = Number(Deno.env.get("PORT")) || 8000;
-Deno.serve({ port }, remixHandler);
+const nodeEnv = Deno.env.get("NODE_ENV") || "development";
+
+if (nodeEnv === "production") {
+  Deno.serve({ port, hostname: "0.0.0.0" }, remixHandler);
+} else {
+  Deno.serve({ port }, remixHandler);
+}

@@ -27,7 +27,7 @@ jobs:
     - name: Set up Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: v1.39.1
+        deno-version: v1.39.x
     - name: Install dependencies
       run: npm ci
     - name: Compiles and builds
@@ -53,6 +53,22 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
       working-directory: ./api
+
+  build-app:
+    name: Build container image for application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: ghcr.io/${{ github.actor }}/supapasskeys-app:latest
 
   build-api:
     name: Build container image for API
