@@ -20,10 +20,13 @@ jobs:
         version: latest
     - name: Compiles and builds
       run: cargo build --verbose
+      working-directory: ./api
     - name: Check Formatting
       run: cargo fmt -- --check
+      working-directory: ./api
     - name: Run tests
       run: cargo test --verbose
+      working-directory: ./api
 
   build:
     runs-on: ubuntu-latest
