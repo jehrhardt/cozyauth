@@ -1,6 +1,4 @@
 mod api;
-mod app;
-pub mod cli;
+pub mod app;
 mod config;
 mod models;
-mod pages;

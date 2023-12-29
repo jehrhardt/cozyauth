@@ -35,7 +35,12 @@ impl MigrationTrait for Migration {
                     )
                     .to_owned(),
             )
-            .await
+            .await?;
+        manager
+            .get_connection()
+            .execute_unprepared("GRANT SELECT ON registration TO postgres;")
+            .await?;
+        Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

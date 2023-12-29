@@ -1,0 +1,5 @@
+# Ignore target directory
+target/
+
+# Ignore Supabase config
+supabase/
