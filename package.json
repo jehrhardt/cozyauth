@@ -10,8 +10,7 @@
     "dev:remix": "remix watch",
     "format": "deno fmt --ignore=node_modules,build,public/build,api",
     "lint": "deno lint --ignore=node_modules,build,public/build,api",
-    "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js",
-    "typecheck": "deno check"
+    "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js"
   },
   "dependencies": {
     "@remix-run/css-bundle": "^2.4.1",

@@ -1,7 +1,9 @@
+import { load } from "https://deno.land/std@0.210.0/dotenv/mod.ts";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/deno";
 import { createServerClient, parse, serialize } from "@supabase/ssr";
 import { SupabaseClient } from "@supabase/supabase-js";
 
+// deno-lint-ignore no-unused-vars
 async function supabaseClient(
   request: ActionFunctionArgs | LoaderFunctionArgs,
   headers: Headers,

@@ -10,7 +10,33 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
+  test-app:
+    name: Build and test application
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Supabase CLI
+      uses: supabase/setup-cli@v1
+      with:
+        version: latest
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+        cache: 'npm'
+    - name: Set up Deno
+      uses: denoland/setup-deno@v1
+      with:
+        deno-version: v1.39.1
+    - name: Install dependencies
+      run: npm ci
+    - name: Compiles and builds
+      run: npm run build
+    - name: Run linter
+      run: npm run lint
+
+  test-api:
+    name: Build and test API
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -28,7 +54,8 @@ jobs:
       run: cargo test --verbose
       working-directory: ./api
 
-  build:
+  build-api:
+    name: Build and push container image for API
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
