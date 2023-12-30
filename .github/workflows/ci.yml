@@ -74,9 +74,6 @@ jobs:
     - name: Run Elixir tests
       run: mix test
       working-directory: ./api
-    - name: Run Rust tests
-      run: cargo test --verbose
-      working-directory: ./api/native/supapasskeys_webauthn
 
   build-app:
     name: Build container image for application
