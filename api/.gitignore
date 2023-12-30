@@ -25,3 +25,5 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 supapasskeys-*.tar
 
+# Ignore Rustler native artifacts.
+priv/native/

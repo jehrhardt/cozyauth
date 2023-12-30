@@ -5,8 +5,12 @@
       "path": "./"
     },
     {
-      "name": "supapasskeys-api",
+      "name": "supapasskeys_api",
       "path": "api"
+    },
+    {
+      "name": "supapasskeys_webauthn",
+      "path": "api/native/supapasskeys_webauthn"
     }
   ],
   "settings": {
