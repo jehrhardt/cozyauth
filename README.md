@@ -49,7 +49,7 @@ service to your `compose.yml` or (`docker-compose.yml`):
 ```yaml
 services:
   supapasskeys:
-    image: ghcr.io/jehrhardt/supapasskeys-api:latest
+    image: ghcr.io/jehrhardt/supapasskeys:main
     ports:
       - 127.0.0.1:3000:3000
     environment:
