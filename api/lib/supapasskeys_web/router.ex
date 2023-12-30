@@ -7,6 +7,8 @@ defmodule SupapasskeysWeb.Router do
 
   scope "/api", SupapasskeysWeb do
     pipe_through :api
+
+    resources "/registrations", RegistrationController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
