@@ -3,33 +3,25 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "registration")]
+#[sea_orm(table_name = "server")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
-    pub user_id: Uuid,
-    #[sea_orm(column_type = "JsonBinary")]
-    pub state: Json,
+    pub relying_party_name: String,
+    pub relying_party_origin: String,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
-    pub server_id: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::server::Entity",
-        from = "Column::ServerId",
-        to = "super::server::Column::Id",
-        on_update = "Cascade",
-        on_delete = "Cascade"
-    )]
-    Server,
+    #[sea_orm(has_many = "super::registration::Entity")]
+    Registration,
 }
 
-impl Related<super::server::Entity> for Entity {
+impl Related<super::registration::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Server.def()
+        Relation::Registration.def()
     }
 }
 

@@ -5,28 +5,28 @@ use axum::{
 use serde_json::{json, Value};
 use uuid::Uuid;
 use webauthn_rs::prelude::Url;
-use webauthn_rs_proto::{CreationChallengeResponse, RegisterPublicKeyCredential};
+use webauthn_rs_proto::RegisterPublicKeyCredential;
 
 use crate::{
     app,
     models::{
         entities::registration::Model,
-        registration::{RelyingParty, UserParams},
+        registration::{Registration, RelyingParty, UserParams},
     },
 };
 
 pub async fn create(
     State(context): State<app::Context>,
     Json(params): Json<UserParams>,
-) -> Json<CreationChallengeResponse> {
+) -> Json<Registration> {
     let relying_party = RelyingParty {
         name: context.config.relying_party_name.clone(),
         origin: Url::parse(&context.config.relying_party_origin).unwrap(),
     };
-    let (creation_challenge_response, _) = Model::new(&context.db, relying_party, params)
+    let registration = Model::new(&context.db, relying_party, params)
         .await
         .unwrap();
-    Json(creation_challenge_response)
+    Json(registration)
 }
 
 pub async fn update(

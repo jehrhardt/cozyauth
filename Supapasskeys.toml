@@ -1,3 +1,3 @@
-database_url = "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+database_url = "postgresql://supapasskeys:supapasskeys@127.0.0.1:54322/postgres"
 relying_party_name = "Supapasskeys"
 relying_party_origin = "http://localhost:8080"
