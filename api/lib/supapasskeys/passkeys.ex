@@ -4,9 +4,11 @@ defmodule Supapasskeys.Passkeys do
   """
 
   import Ecto.Query, warn: false
+  alias Supapasskeys.WebAuthn
   alias Supapasskeys.Repo
 
   alias Supapasskeys.Passkeys.Registration
+  alias Supapasskeys.Passkeys.User
 
   @doc """
   Returns the list of registrations.
@@ -50,9 +52,34 @@ defmodule Supapasskeys.Passkeys do
 
   """
   def create_registration(attrs \\ %{}) do
-    %Registration{}
-    |> Registration.changeset(attrs)
-    |> Repo.insert()
+    relying_party = %WebAuthn.RelyingParty{
+      name: "Supabase",
+      origin: "https://supabase.io"
+    }
+
+    %User{}
+    |> User.changeset(attrs)
+    |> User.to_webauthn_user()
+    |> case do
+      {:ok, user} ->
+        {creation_options_json, state_json} =
+          WebAuthn.start_passkey_registration(user, relying_party)
+
+        %Registration{}
+        |> Registration.changeset(
+          %{}
+          |> Map.put(:state, state_json)
+          |> Map.put(:user_id, user.id)
+        )
+        |> Repo.insert()
+        |> case do
+          {:ok, registration} ->
+            {:ok, registration |> Map.put(:creation_options, creation_options_json)}
+        end
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """

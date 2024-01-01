@@ -21,32 +21,30 @@ defmodule Supapasskeys.WebAuthnTest do
         }
 
       {credentials_creation_options, state} =
-        WebAuthn.start_passkey_registration(relying_party, user)
+        WebAuthn.start_passkey_registration(user, relying_party)
 
       %{
-        "publicKey" => %{
-          "rp" => %{
-            "name" => relying_party_name,
-            "id" => relying_party_id
-          },
-          "user" => %{
-            "name" => user_name,
-            "displayName" => user_display_name,
-            "id" => user_id
-          },
-          "challenge" => challenge,
-          "pubKeyCredParams" => [
-            %{"type" => "public-key", "alg" => -7},
-            %{"type" => "public-key", "alg" => -257}
-          ],
-          "timeout" => 60000,
-          "attestation" => "none",
-          "authenticatorSelection" => %{
-            "requireResidentKey" => false,
-            "userVerification" => "preferred"
-          },
-          "extensions" => %{"uvm" => true, "credProps" => true}
-        }
+        "rp" => %{
+          "name" => relying_party_name,
+          "id" => relying_party_id
+        },
+        "user" => %{
+          "name" => user_name,
+          "displayName" => user_display_name,
+          "id" => user_id
+        },
+        "challenge" => challenge,
+        "pubKeyCredParams" => [
+          %{"type" => "public-key", "alg" => -7},
+          %{"type" => "public-key", "alg" => -257}
+        ],
+        "timeout" => 60000,
+        "attestation" => "none",
+        "authenticatorSelection" => %{
+          "requireResidentKey" => false,
+          "userVerification" => "preferred"
+        },
+        "extensions" => %{"uvm" => true, "credProps" => true}
       } = Jason.decode!(credentials_creation_options)
 
       assert relying_party_name == relying_party.name

@@ -11,11 +11,12 @@ defmodule Supapasskeys.PasskeysFixtures do
     {:ok, registration} =
       attrs
       |> Enum.into(%{
-        state: Jason.encode!(%{"some" => "state"}),
-        user_id: "7488a646-e31f-11e4-aace-600308960662"
+        id: Faker.UUID.v4(),
+        name: Faker.Internet.email(),
+        display_name: Faker.Person.name()
       })
       |> Supapasskeys.Passkeys.create_registration()
 
-    registration
+    registration |> Map.update!(:creation_options, fn _ -> nil end)
   end
 end

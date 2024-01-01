@@ -22,8 +22,8 @@ struct User<'a> {
 
 #[rustler::nif]
 fn start_passkey_registration(
-    relying_party: RelyingParty,
     user: User,
+    relying_party: RelyingParty,
 ) -> NifResult<(String, String)> {
     let webauthn = init_webauthn(relying_party);
     let user_id = Uuid::parse_str(user.id).unwrap();
@@ -31,16 +31,16 @@ fn start_passkey_registration(
         .start_passkey_registration(user_id, user.name, user.display_name, None)
         .unwrap();
     Ok((
-        serde_json::to_string(&creation_challenge).unwrap(),
+        serde_json::to_string(&creation_challenge.public_key).unwrap(),
         serde_json::to_string(&state).unwrap(),
     ))
 }
 
 #[rustler::nif]
 fn finish_passkey_registration(
-    relying_party: RelyingParty,
     public_key_credential_json: &str,
     state_json: &str,
+    relying_party: RelyingParty,
 ) -> NifResult<String> {
     let webauthn = init_webauthn(relying_party);
     let public_key_credentials =

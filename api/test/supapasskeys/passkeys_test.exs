@@ -21,12 +21,17 @@ defmodule Supapasskeys.PasskeysTest do
     end
 
     test "create_registration/1 with valid data creates a registration" do
-      state_json = Jason.encode!(%{"some" => "state"})
-      valid_attrs = %{state: state_json, user_id: "7488a646-e31f-11e4-aace-600308960662"}
+      valid_attrs = %{
+        id: Faker.UUID.v4(),
+        name: Faker.Internet.email(),
+        display_name: Faker.Person.name()
+      }
 
       assert {:ok, %Registration{} = registration} = Passkeys.create_registration(valid_attrs)
-      assert registration.state == state_json
-      assert registration.user_id == "7488a646-e31f-11e4-aace-600308960662"
+
+      assert is_binary(registration.state)
+      assert registration.user_id == valid_attrs.id
+      assert is_binary(registration.creation_options)
     end
 
     test "create_registration/1 with invalid data returns error changeset" do

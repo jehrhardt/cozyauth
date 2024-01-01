@@ -10,8 +10,8 @@ defmodule Supapasskeys.WebAuthn do
   end
 
   # When your NIF is loaded, it will override this function.
-  def start_passkey_registration(_relying_party, _user), do: :erlang.nif_error(:nif_not_loaded)
+  def start_passkey_registration(_user, _relying_party), do: :erlang.nif_error(:nif_not_loaded)
 
-  def finish_passkey_registration(_relying_party, _public_key_credential_json, _state_json),
+  def finish_passkey_registration(_public_key_credential_json, _state_json, _relay_party),
     do: :erlang.nif_error(:nif_not_loaded)
 end

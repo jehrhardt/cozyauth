@@ -5,10 +5,11 @@ defmodule SupapasskeysWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", SupapasskeysWeb do
+  scope "/passkeys", SupapasskeysWeb do
     pipe_through :api
 
-    resources "/registrations", RegistrationController, except: [:new, :edit]
+    post "/", RegistrationController, :create
+    patch "/registrations/:id", RegistrationController, :update
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
