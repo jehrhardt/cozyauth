@@ -114,4 +114,22 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  relying_party_name =
+    System.get_env("RELYING_PARTY_NAME") ||
+      raise """
+      environment variable RELYING_PARTY_NAME is missing.
+      For example: My App
+      """
+
+  relying_party_origin =
+    System.get_env("RELYING_PARTY_ORIGIN") ||
+      raise """
+      environment variable RELYING_PARTY_ORIGIN is missing.
+      For example: https://myapp.com
+      """
+
+  config :supapasskeys,
+    relying_party_name: relying_party_name,
+    relying_party_origin: relying_party_origin
 end

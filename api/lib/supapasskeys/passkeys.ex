@@ -52,18 +52,13 @@ defmodule Supapasskeys.Passkeys do
 
   """
   def create_registration(attrs \\ %{}) do
-    relying_party = %WebAuthn.RelyingParty{
-      name: "Supabase",
-      origin: "https://supabase.io"
-    }
-
     %User{}
     |> User.changeset(attrs)
     |> User.to_webauthn_user()
     |> case do
       {:ok, user} ->
         {creation_options_json, state_json} =
-          WebAuthn.start_passkey_registration(user, relying_party)
+          WebAuthn.start_passkey_registration(user, load_relying_party())
 
         %Registration{}
         |> Registration.changeset(
@@ -101,6 +96,29 @@ defmodule Supapasskeys.Passkeys do
   end
 
   @doc """
+  Confirms a registration.
+
+  ## Examples
+
+      iex> confirm_registration(registration, public_key_credentials_json)
+      {:ok, %Registration{}}
+
+      iex> confirm_registration(registration, public_key_credentials_json)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def confirm_registration(%Registration{} = registration, public_key_credentials_json) do
+    _passkey =
+      WebAuthn.finish_passkey_registration(
+        public_key_credentials_json,
+        registration.state,
+        load_relying_party()
+      )
+
+    update_registration(registration, %{state: nil, confirmed_at: DateTime.utc_now()})
+  end
+
+  @doc """
   Deletes a registration.
 
   ## Examples
@@ -127,5 +145,14 @@ defmodule Supapasskeys.Passkeys do
   """
   def change_registration(%Registration{} = registration, attrs \\ %{}) do
     Registration.changeset(registration, attrs)
+  end
+
+  defp load_relying_party() do
+    relying_party_config = Application.get_env(:supapasskeys, Supapasskeys.Passkeys)
+
+    %WebAuthn.RelyingParty{
+      name: relying_party_config[:relying_party_name],
+      origin: relying_party_config[:relying_party_origin]
+    }
   end
 end

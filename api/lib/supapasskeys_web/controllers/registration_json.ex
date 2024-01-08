@@ -1,17 +1,21 @@
 defmodule SupapasskeysWeb.RegistrationJSON do
-  alias Supapasskeys.Passkeys.Registration
-
   @doc """
   Renders a single registration.
   """
   def show(%{registration: registration}) do
-    data(registration)
-  end
-
-  defp data(%Registration{} = registration) do
     %{
       id: registration.id,
       creation_options: registration.creation_options
+    }
+  end
+
+  @doc """
+  Renders a confirmed registration.
+  """
+  def confirmed(%{registration: registration}) do
+    %{
+      id: registration.id,
+      confirmed_at: registration.confirmed_at
     }
   end
 end
