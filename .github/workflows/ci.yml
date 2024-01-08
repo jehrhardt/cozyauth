@@ -28,6 +28,8 @@ jobs:
       uses: denoland/setup-deno@v1
       with:
         deno-version: v1.39.x
+    - name: Start Supabase
+      run: supabase start
     - name: Install dependencies
       run: npm ci
     - name: Compiles and builds
@@ -44,14 +46,33 @@ jobs:
       uses: supabase/setup-cli@v1
       with:
         version: latest
-    - name: Compiles and builds
-      run: cargo build --verbose
+    - name: Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.16.0'
+        otp-version: '26.2.1'
+    - name: Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+    - name: Start Supabase
+      run: supabase start
+    - name: Install dependencies
+      run: mix deps.get
       working-directory: ./api
-    - name: Check Formatting
+    - name: Check Elixir Formatting
+      run: mix format --check-formatted
+      working-directory: ./api
+    - name: Check Rust Formatting
       run: cargo fmt -- --check
+      working-directory: ./api/native/supapasskeys_webauthn
+    - name: Compiles without warnings
+      run: mix compile --warnings-as-errors
       working-directory: ./api
-    - name: Run tests
-      run: cargo test --verbose
+    - name: Run Elixir tests
+      run: mix test
       working-directory: ./api
 
   build-app:
