@@ -20,7 +20,7 @@ jobs:
       with:
         version: latest
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 20.x
         cache: 'npm'
@@ -89,7 +89,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: false
-          tags: ghcr.io/${{ github.actor }}/supapasskeys-app:latest
+          tags: ghcr.io/jehrhardt/supapasskeys-app:latest
 
   build-api:
     name: Build container image for API
@@ -105,4 +105,4 @@ jobs:
           context: ./api
           file: ./api/Dockerfile
           push: false
-          tags: ghcr.io/${{ github.actor }}/supapasskeys-api:latest
+          tags: ghcr.io/jehrhardt/supapasskeys-api:latest
