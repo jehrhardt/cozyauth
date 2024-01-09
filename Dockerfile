@@ -10,7 +10,7 @@ COPY . .
 
 RUN npm run build
 
-FROM denoland/deno:bin-1.39.1 AS deno
+FROM denoland/deno:bin-1.39.2 AS deno
 
 FROM ubuntu:jammy-20231211.1
 
