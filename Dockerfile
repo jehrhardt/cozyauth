@@ -33,6 +33,7 @@ RUN curl -L https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/
 
 # set build ENV
 ENV MIX_ENV="prod"
+ENV ERL_FLAGS="+JPperf true"
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
