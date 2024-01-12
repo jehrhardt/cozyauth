@@ -5,11 +5,9 @@ config :supapasskeys, Supapasskeys.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  port: 54322,
-  database: "postgres",
+  database: "supapasskeys_test",
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: 10,
-  after_connect: {Postgrex, :query!, ["SET search_path TO supapasskeys_test", []]}
+  pool_size: 10
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

@@ -5,12 +5,10 @@ config :supapasskeys, Supapasskeys.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  port: 54322,
-  database: "postgres",
+  database: "supapasskeys_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10,
-  after_connect: {Postgrex, :query!, ["SET search_path TO supapasskeys", []]}
+  pool_size: 10
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
