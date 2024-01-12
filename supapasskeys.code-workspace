@@ -5,17 +5,13 @@
       "path": "./"
     },
     {
-      "name": "supapasskeys_api",
-      "path": "api"
-    },
-    {
       "name": "supapasskeys_webauthn",
-      "path": "api/native/supapasskeys_webauthn"
+      "path": "native/supapasskeys_webauthn"
     }
   ],
   "settings": {
     "files.exclude": {
-      "api/": true
+      "native/supapasskeys_webauthn/": true
     }
   }
 }
