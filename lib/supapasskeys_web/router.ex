@@ -1,8 +1,24 @@
 defmodule SupapasskeysWeb.Router do
   use SupapasskeysWeb, :router
 
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {SupapasskeysWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
+    plug SupapasskeysWeb.ApiAuth
+  end
+
+  scope "/", SupapasskeysWeb do
+    pipe_through :browser
+
+    get "/", PageController, :home
   end
 
   scope "/passkeys", SupapasskeysWeb do
@@ -22,7 +38,7 @@ defmodule SupapasskeysWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through [:fetch_session, :protect_from_forgery]
+      pipe_through :browser
 
       live_dashboard "/dashboard", metrics: SupapasskeysWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview

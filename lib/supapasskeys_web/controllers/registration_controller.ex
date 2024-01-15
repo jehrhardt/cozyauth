@@ -6,7 +6,7 @@ defmodule SupapasskeysWeb.RegistrationController do
 
   action_fallback SupapasskeysWeb.FallbackController
 
-  def create(conn, %{"registration" => user_params}) do
+  def create(conn, user_params) do
     with {:ok, %Registration{} = registration} <-
            Passkeys.create_registration(user_params) do
       conn

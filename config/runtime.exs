@@ -115,21 +115,30 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
-  relying_party_name =
-    System.get_env("RELYING_PARTY_NAME") ||
+  api_domain =
+    System.get_env("SUPAPASSKEYS_API_DOMAIN") ||
       raise """
-      environment variable RELYING_PARTY_NAME is missing.
+      environment variable SUPAPASSKEYS_API_DOMAIN is missing.
+      For example: api.myapp.com
+      """
+
+  config :supapasskeys, SupapasskeysWeb.ApiAuth, api_domain: api_domain
+
+  relying_party_name =
+    System.get_env("SUPAPASSKEYS_RELYING_PARTY_NAME") ||
+      raise """
+      environment variable SUPAPASSKEYS_RELYING_PARTY_NAME is missing.
       For example: My App
       """
 
   relying_party_origin =
-    System.get_env("RELYING_PARTY_ORIGIN") ||
+    System.get_env("SUPAPASSKEYS_RELYING_PARTY_ORIGIN") ||
       raise """
-      environment variable RELYING_PARTY_ORIGIN is missing.
+      environment variable SUPAPASSKEYS_RELYING_PARTY_ORIGIN is missing.
       For example: https://myapp.com
       """
 
-  config :supapasskeys,
+  config :supapasskeys, Supapasskeys.Passkeys,
     relying_party_name: relying_party_name,
     relying_party_origin: relying_party_origin
 end

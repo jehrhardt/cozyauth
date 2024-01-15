@@ -73,8 +73,8 @@ Now add a `.env` file to your project root with the following content:
 ```bash
 DATABASE_URL=<your_supabase_database_url>
 SECRET_KEY_BASE=<your_supa_secret_key>
-RELYING_PARTY_NAME=<your_relying_party_name>
-RELYING_PARTY_ORIGIN=<your_relying_party_origin>
+SUPAPASSKEYS_RELYING_PARTY_NAME=<your_relying_party_name>
+SUPAPASSKEYS_RELYING_PARTY_ORIGIN=<your_relying_party_origin>
 ```
 
 Make sure to replace `<your_supabase_database_url>` with the URL of your
