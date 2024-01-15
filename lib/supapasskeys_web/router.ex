@@ -1,6 +1,15 @@
 defmodule SupapasskeysWeb.Router do
   use SupapasskeysWeb, :router
 
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {SupapasskeysWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -12,6 +21,17 @@ defmodule SupapasskeysWeb.Router do
     patch "/registrations/:id", RegistrationController, :update
   end
 
+  scope "/", SupapasskeysWeb do
+    pipe_through :browser
+
+    get "/", PageController, :home
+  end
+
+  # Other scopes may use custom stacks.
+  # scope "/api", SupapasskeysWeb do
+  #   pipe_through :api
+  # end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:supapasskeys, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
@@ -22,7 +42,7 @@ defmodule SupapasskeysWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through [:fetch_session, :protect_from_forgery]
+      pipe_through :browser
 
       live_dashboard "/dashboard", metrics: SupapasskeysWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
