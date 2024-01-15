@@ -6,6 +6,7 @@ config :supapasskeys, Supapasskeys.Repo,
   password: "postgres",
   hostname: "localhost",
   database: "postgres",
+  port: 54322,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
