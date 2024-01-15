@@ -12,13 +12,7 @@ defmodule SupapasskeysWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-  end
-
-  scope "/passkeys", SupapasskeysWeb do
-    pipe_through :api
-
-    post "/", RegistrationController, :create
-    patch "/registrations/:id", RegistrationController, :update
+    plug SupapasskeysWeb.ApiAuth
   end
 
   scope "/", SupapasskeysWeb do
@@ -27,10 +21,12 @@ defmodule SupapasskeysWeb.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SupapasskeysWeb do
-  #   pipe_through :api
-  # end
+  scope "/passkeys", SupapasskeysWeb do
+    pipe_through :api
+
+    post "/", RegistrationController, :create
+    patch "/registrations/:id", RegistrationController, :update
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:supapasskeys, :dev_routes) do
