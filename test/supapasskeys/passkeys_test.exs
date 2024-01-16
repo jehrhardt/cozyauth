@@ -10,11 +10,6 @@ defmodule Supapasskeys.PasskeysTest do
 
     @invalid_attrs %{state: nil, user_id: nil}
 
-    test "list_registrations/0 returns all registrations" do
-      registration = registration_fixture()
-      assert Passkeys.list_registrations() == [registration]
-    end
-
     test "get_registration!/1 returns the registration with given id" do
       registration = registration_fixture()
       assert Passkeys.get_registration!(registration.id) == registration
@@ -58,16 +53,61 @@ defmodule Supapasskeys.PasskeysTest do
 
       assert registration == Passkeys.get_registration!(registration.id)
     end
+  end
 
-    test "delete_registration/1 deletes the registration" do
-      registration = registration_fixture()
-      assert {:ok, %Registration{}} = Passkeys.delete_registration(registration)
-      assert_raise Ecto.NoResultsError, fn -> Passkeys.get_registration!(registration.id) end
+  describe "servers" do
+    alias Supapasskeys.Passkeys.Server
+
+    import Supapasskeys.PasskeysFixtures
+
+    @invalid_attrs %{relying_party_name: nil, relying_party_origin: nil}
+
+    test "list_servers/0 returns all servers" do
+      server = server_fixture()
+      assert Passkeys.list_servers() == [server]
     end
 
-    test "change_registration/1 returns a registration changeset" do
-      registration = registration_fixture()
-      assert %Ecto.Changeset{} = Passkeys.change_registration(registration)
+    test "get_server!/1 returns the server with given id" do
+      server = server_fixture()
+      assert Passkeys.get_server!(server.id) == server
+    end
+
+    test "create_server/1 with valid data creates a server" do
+      valid_attrs = %{relying_party_name: "some relying_party_name", relying_party_origin: "some relying_party_origin"}
+
+      assert {:ok, %Server{} = server} = Passkeys.create_server(valid_attrs)
+      assert server.relying_party_name == "some relying_party_name"
+      assert server.relying_party_origin == "some relying_party_origin"
+    end
+
+    test "create_server/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Passkeys.create_server(@invalid_attrs)
+    end
+
+    test "update_server/2 with valid data updates the server" do
+      server = server_fixture()
+      update_attrs = %{relying_party_name: "some updated relying_party_name", relying_party_origin: "some updated relying_party_origin"}
+
+      assert {:ok, %Server{} = server} = Passkeys.update_server(server, update_attrs)
+      assert server.relying_party_name == "some updated relying_party_name"
+      assert server.relying_party_origin == "some updated relying_party_origin"
+    end
+
+    test "update_server/2 with invalid data returns error changeset" do
+      server = server_fixture()
+      assert {:error, %Ecto.Changeset{}} = Passkeys.update_server(server, @invalid_attrs)
+      assert server == Passkeys.get_server!(server.id)
+    end
+
+    test "delete_server/1 deletes the server" do
+      server = server_fixture()
+      assert {:ok, %Server{}} = Passkeys.delete_server(server)
+      assert_raise Ecto.NoResultsError, fn -> Passkeys.get_server!(server.id) end
+    end
+
+    test "change_server/1 returns a server changeset" do
+      server = server_fixture()
+      assert %Ecto.Changeset{} = Passkeys.change_server(server)
     end
   end
 end

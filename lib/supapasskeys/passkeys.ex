@@ -9,19 +9,7 @@ defmodule Supapasskeys.Passkeys do
 
   alias Supapasskeys.Passkeys.Registration
   alias Supapasskeys.Passkeys.User
-
-  @doc """
-  Returns the list of registrations.
-
-  ## Examples
-
-      iex> list_registrations()
-      [%Registration{}, ...]
-
-  """
-  def list_registrations do
-    Repo.all(Registration)
-  end
+  alias Supapasskeys.Passkeys.Server
 
   @doc """
   Gets a single registration.
@@ -118,35 +106,6 @@ defmodule Supapasskeys.Passkeys do
     update_registration(registration, %{state: nil, confirmed_at: DateTime.utc_now()})
   end
 
-  @doc """
-  Deletes a registration.
-
-  ## Examples
-
-      iex> delete_registration(registration)
-      {:ok, %Registration{}}
-
-      iex> delete_registration(registration)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_registration(%Registration{} = registration) do
-    Repo.delete(registration)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking registration changes.
-
-  ## Examples
-
-      iex> change_registration(registration)
-      %Ecto.Changeset{data: %Registration{}}
-
-  """
-  def change_registration(%Registration{} = registration, attrs \\ %{}) do
-    Registration.changeset(registration, attrs)
-  end
-
   defp load_relying_party() do
     relying_party_config = Application.get_env(:supapasskeys, Supapasskeys.Passkeys)
 
@@ -154,5 +113,99 @@ defmodule Supapasskeys.Passkeys do
       name: relying_party_config[:relying_party_name],
       origin: relying_party_config[:relying_party_origin]
     }
+  end
+
+  @doc """
+  Returns the list of servers.
+
+  ## Examples
+
+      iex> list_servers()
+      [%Server{}, ...]
+
+  """
+  def list_servers do
+    Repo.all(Server)
+  end
+
+  @doc """
+  Gets a single server.
+
+  Raises `Ecto.NoResultsError` if the Server does not exist.
+
+  ## Examples
+
+      iex> get_server!(123)
+      %Server{}
+
+      iex> get_server!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_server!(id), do: Repo.get!(Server, id)
+
+  @doc """
+  Creates a server.
+
+  ## Examples
+
+      iex> create_server(%{field: value})
+      {:ok, %Server{}}
+
+      iex> create_server(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_server(attrs \\ %{}) do
+    %Server{}
+    |> Server.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a server.
+
+  ## Examples
+
+      iex> update_server(server, %{field: new_value})
+      {:ok, %Server{}}
+
+      iex> update_server(server, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_server(%Server{} = server, attrs) do
+    server
+    |> Server.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a server.
+
+  ## Examples
+
+      iex> delete_server(server)
+      {:ok, %Server{}}
+
+      iex> delete_server(server)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_server(%Server{} = server) do
+    Repo.delete(server)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking server changes.
+
+  ## Examples
+
+      iex> change_server(server)
+      %Ecto.Changeset{data: %Server{}}
+
+  """
+  def change_server(%Server{} = server, attrs \\ %{}) do
+    Server.changeset(server, attrs)
   end
 end

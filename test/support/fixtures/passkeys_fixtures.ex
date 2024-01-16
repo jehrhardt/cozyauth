@@ -19,4 +19,19 @@ defmodule Supapasskeys.PasskeysFixtures do
 
     registration |> Map.update!(:creation_options, fn _ -> nil end)
   end
+
+  @doc """
+  Generate a server.
+  """
+  def server_fixture(attrs \\ %{}) do
+    {:ok, server} =
+      attrs
+      |> Enum.into(%{
+        relying_party_name: "some relying_party_name",
+        relying_party_origin: "some relying_party_origin"
+      })
+      |> Supapasskeys.Passkeys.create_server()
+
+    server
+  end
 end
