@@ -7,6 +7,7 @@ defmodule Supapasskeys.Passkeys.Server do
   schema "servers" do
     field :relying_party_name, :string
     field :relying_party_origin, :string
+    field :subdomain, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -14,7 +15,7 @@ defmodule Supapasskeys.Passkeys.Server do
   @doc false
   def changeset(server, attrs) do
     server
-    |> cast(attrs, [:relying_party_name, :relying_party_origin])
-    |> validate_required([:relying_party_name, :relying_party_origin])
+    |> cast(attrs, [:relying_party_name, :relying_party_origin, :subdomain])
+    |> validate_required([:relying_party_name, :relying_party_origin, :subdomain])
   end
 end

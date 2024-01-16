@@ -9,10 +9,13 @@ defmodule SupapasskeysWeb.RegistrationControllerTest do
   @invalid_attrs %{id: nil, name: nil, display_name: nil}
 
   setup %{conn: conn} do
+    import Supapasskeys.PasskeysFixtures
+    server = server_fixture()
+
     {:ok,
      conn:
        put_req_header(conn, "accept", "application/json")
-       |> Map.put(:host, "api.example.com")}
+       |> Map.put(:host, "#{server.subdomain}.example.com")}
   end
 
   describe "create registration" do

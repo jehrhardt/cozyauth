@@ -6,7 +6,8 @@ defmodule SupapasskeysWeb.ServerLiveTest do
 
   @create_attrs %{
     relying_party_name: "some relying_party_name",
-    relying_party_origin: "some relying_party_origin"
+    relying_party_origin: "some relying_party_origin",
+    subdomain: Faker.Internet.domain_word()
   }
   @update_attrs %{
     relying_party_name: "some updated relying_party_name",

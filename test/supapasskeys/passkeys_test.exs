@@ -1,4 +1,5 @@
 defmodule Supapasskeys.PasskeysTest do
+  alias Supapasskeys.WebAuthn.RelyingParty
   use Supapasskeys.DataCase
 
   alias Supapasskeys.Passkeys
@@ -10,31 +11,51 @@ defmodule Supapasskeys.PasskeysTest do
 
     @invalid_attrs %{state: nil, user_id: nil}
 
-    test "get_registration!/1 returns the registration with given id" do
-      registration = registration_fixture()
+    setup do
+      {:ok,
+       %{
+         relying_party: %RelyingParty{
+           name: Faker.Company.name(),
+           origin: "https://#{Faker.Internet.domain_name()}"
+         }
+       }}
+    end
+
+    test "get_registration!/1 returns the registration with given id", %{
+      relying_party: relying_party
+    } do
+      registration = registration_fixture(relying_party)
       assert Passkeys.get_registration!(registration.id) == registration
     end
 
-    test "create_registration/1 with valid data creates a registration" do
+    test "create_registration/1 with valid data creates a registration", %{
+      relying_party: relying_party
+    } do
       valid_attrs = %{
         id: Faker.UUID.v4(),
         name: Faker.Internet.email(),
         display_name: Faker.Person.name()
       }
 
-      assert {:ok, %Registration{} = registration} = Passkeys.create_registration(valid_attrs)
+      assert {:ok, %Registration{} = registration} =
+               Passkeys.create_registration(relying_party, valid_attrs)
 
       assert is_binary(registration.state)
       assert registration.user_id == valid_attrs.id
       assert is_binary(registration.creation_options)
     end
 
-    test "create_registration/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Passkeys.create_registration(@invalid_attrs)
+    test "create_registration/1 with invalid data returns error changeset", %{
+      relying_party: relying_party
+    } do
+      assert {:error, %Ecto.Changeset{}} =
+               Passkeys.create_registration(relying_party, @invalid_attrs)
     end
 
-    test "update_registration/2 with valid data updates the registration" do
-      registration = registration_fixture()
+    test "update_registration/2 with valid data updates the registration", %{
+      relying_party: relying_party
+    } do
+      registration = registration_fixture(relying_party)
       update_state_json = Jason.encode!(%{"some" => "updated state"})
       update_attrs = %{state: update_state_json, user_id: "7488a646-e31f-11e4-aace-600308960668"}
 
@@ -45,8 +66,10 @@ defmodule Supapasskeys.PasskeysTest do
       assert registration.user_id == "7488a646-e31f-11e4-aace-600308960668"
     end
 
-    test "update_registration/2 with invalid data returns error changeset" do
-      registration = registration_fixture()
+    test "update_registration/2 with invalid data returns error changeset", %{
+      relying_party: relying_party
+    } do
+      registration = registration_fixture(relying_party)
 
       assert {:error, %Ecto.Changeset{}} =
                Passkeys.update_registration(registration, @invalid_attrs)
@@ -75,7 +98,8 @@ defmodule Supapasskeys.PasskeysTest do
     test "create_server/1 with valid data creates a server" do
       valid_attrs = %{
         relying_party_name: "some relying_party_name",
-        relying_party_origin: "some relying_party_origin"
+        relying_party_origin: "some relying_party_origin",
+        subdomain: Faker.Internet.domain_word()
       }
 
       assert {:ok, %Server{} = server} = Passkeys.create_server(valid_attrs)

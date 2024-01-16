@@ -21,6 +21,7 @@ defmodule SupapasskeysWeb.ServerLive.FormComponent do
       >
         <.input field={@form[:relying_party_name]} type="text" label="Relying party name" />
         <.input field={@form[:relying_party_origin]} type="text" label="Relying party origin" />
+        <.input field={@form[:subdomain]} type="text" label="Subdomain" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Server</.button>
         </:actions>

@@ -124,6 +124,12 @@ if config_env() == :prod do
 
   config :supapasskeys, SupapasskeysWeb.ApiAuth, api_domain: api_domain
 
+  multi_tenancy =
+    case System.get_env("SUPAPASSKEYS_MULTI_TENANCY") do
+      "yes" -> true
+      _ -> false
+    end
+
   relying_party_name =
     System.get_env("SUPAPASSKEYS_RELYING_PARTY_NAME") ||
       raise """
@@ -139,6 +145,7 @@ if config_env() == :prod do
       """
 
   config :supapasskeys, Supapasskeys.Passkeys,
+    multi_tenancy: multi_tenancy,
     relying_party_name: relying_party_name,
     relying_party_origin: relying_party_origin
 end

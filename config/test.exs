@@ -30,8 +30,9 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :supapasskeys, SupapasskeysWeb.ApiAuth, api_domain: "api.example.com"
+config :supapasskeys, SupapasskeysWeb.ApiAuth, api_domain: "example.com"
 
 config :supapasskeys, Supapasskeys.Passkeys,
+  multi_tenancy: false,
   relying_party_name: "Supapasskeys",
   relying_party_origin: "http://localhost:4000"

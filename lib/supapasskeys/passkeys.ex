@@ -4,6 +4,7 @@ defmodule Supapasskeys.Passkeys do
   """
 
   import Ecto.Query, warn: false
+  alias Supapasskeys.WebAuthn.RelyingParty
   alias Supapasskeys.WebAuthn
   alias Supapasskeys.Repo
 
@@ -39,14 +40,14 @@ defmodule Supapasskeys.Passkeys do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_registration(attrs \\ %{}) do
+  def create_registration(%RelyingParty{} = relying_party, attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
     |> User.to_webauthn_user()
     |> case do
       {:ok, user} ->
         {creation_options_json, state_json} =
-          WebAuthn.start_passkey_registration(user, load_relying_party())
+          WebAuthn.start_passkey_registration(user, relying_party)
 
         %Registration{}
         |> Registration.changeset(
@@ -95,24 +96,19 @@ defmodule Supapasskeys.Passkeys do
       {:error, %Ecto.Changeset{}}
 
   """
-  def confirm_registration(%Registration{} = registration, public_key_credentials_json) do
+  def confirm_registration(
+        %RelyingParty{} = relying_party,
+        %Registration{} = registration,
+        public_key_credentials_json
+      ) do
     _passkey =
       WebAuthn.finish_passkey_registration(
         public_key_credentials_json,
         registration.state,
-        load_relying_party()
+        relying_party
       )
 
     update_registration(registration, %{state: nil, confirmed_at: DateTime.utc_now()})
-  end
-
-  defp load_relying_party() do
-    relying_party_config = Application.get_env(:supapasskeys, Supapasskeys.Passkeys)
-
-    %WebAuthn.RelyingParty{
-      name: relying_party_config[:relying_party_name],
-      origin: relying_party_config[:relying_party_origin]
-    }
   end
 
   @doc """
@@ -143,6 +139,22 @@ defmodule Supapasskeys.Passkeys do
 
   """
   def get_server!(id), do: Repo.get!(Server, id)
+
+  @doc """
+  Gets a single server by subdomain.
+
+  ## Examples
+
+      iex> get_server_by_subdomain("subdomain")
+      %Server{}
+
+      iex> get_server_by_subdomain("subdomain")
+      nil
+
+  """
+  def get_server_by_subdomain(subdomain) do
+    Repo.get_by(Server, subdomain: subdomain)
+  end
 
   @doc """
   Creates a server.

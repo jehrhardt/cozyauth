@@ -6,6 +6,7 @@ defmodule Supapasskeys.Repo.Migrations.CreateServers do
       add :id, :binary_id, primary_key: true
       add :relying_party_name, :string
       add :relying_party_origin, :string
+      add :subdomain, :string
 
       timestamps(type: :utc_datetime)
     end
