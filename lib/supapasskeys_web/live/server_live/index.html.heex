@@ -13,7 +13,9 @@
   row_click={fn {_id, server} -> JS.navigate(~p"/servers/#{server}") end}
 >
   <:col :let={{_id, server}} label="Relying party name"><%= server.relying_party_name %></:col>
-  <:col :let={{_id, server}} label="Relying party origin"><%= server.relying_party_origin %></:col>
+  <:col :let={{_id, server}} label="Relying party origin">
+    <%= server.relying_party_origin %>
+  </:col>
   <:action :let={{_id, server}}>
     <div class="sr-only">
       <.link navigate={~p"/servers/#{server}"}>Show</.link>
@@ -30,7 +32,12 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="server-modal" show on_cancel={JS.patch(~p"/servers")}>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="server-modal"
+  show
+  on_cancel={JS.patch(~p"/servers")}
+>
   <.live_component
     module={SupapasskeysWeb.ServerLive.FormComponent}
     id={@server.id || :new}

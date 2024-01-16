@@ -15,7 +15,12 @@
 
 <.back navigate={~p"/servers"}>Back to servers</.back>
 
-<.modal :if={@live_action == :edit} id="server-modal" show on_cancel={JS.patch(~p"/servers/#{@server}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="server-modal"
+  show
+  on_cancel={JS.patch(~p"/servers/#{@server}")}
+>
   <.live_component
     module={SupapasskeysWeb.ServerLive.FormComponent}
     id={@server.id}

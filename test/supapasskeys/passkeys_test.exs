@@ -73,7 +73,10 @@ defmodule Supapasskeys.PasskeysTest do
     end
 
     test "create_server/1 with valid data creates a server" do
-      valid_attrs = %{relying_party_name: "some relying_party_name", relying_party_origin: "some relying_party_origin"}
+      valid_attrs = %{
+        relying_party_name: "some relying_party_name",
+        relying_party_origin: "some relying_party_origin"
+      }
 
       assert {:ok, %Server{} = server} = Passkeys.create_server(valid_attrs)
       assert server.relying_party_name == "some relying_party_name"
@@ -86,7 +89,11 @@ defmodule Supapasskeys.PasskeysTest do
 
     test "update_server/2 with valid data updates the server" do
       server = server_fixture()
-      update_attrs = %{relying_party_name: "some updated relying_party_name", relying_party_origin: "some updated relying_party_origin"}
+
+      update_attrs = %{
+        relying_party_name: "some updated relying_party_name",
+        relying_party_origin: "some updated relying_party_origin"
+      }
 
       assert {:ok, %Server{} = server} = Passkeys.update_server(server, update_attrs)
       assert server.relying_party_name == "some updated relying_party_name"

@@ -4,8 +4,14 @@ defmodule SupapasskeysWeb.ServerLiveTest do
   import Phoenix.LiveViewTest
   import Supapasskeys.PasskeysFixtures
 
-  @create_attrs %{relying_party_name: "some relying_party_name", relying_party_origin: "some relying_party_origin"}
-  @update_attrs %{relying_party_name: "some updated relying_party_name", relying_party_origin: "some updated relying_party_origin"}
+  @create_attrs %{
+    relying_party_name: "some relying_party_name",
+    relying_party_origin: "some relying_party_origin"
+  }
+  @update_attrs %{
+    relying_party_name: "some updated relying_party_name",
+    relying_party_origin: "some updated relying_party_origin"
+  }
   @invalid_attrs %{relying_party_name: nil, relying_party_origin: nil}
 
   defp create_server(_) do
