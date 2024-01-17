@@ -115,6 +115,12 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
+  multi_tenancy =
+    case System.get_env("SUPAPASSKEYS_MULTI_TENANCY") do
+      "yes" -> true
+      _ -> false
+    end
+
   api_domain =
     System.get_env("SUPAPASSKEYS_API_DOMAIN") ||
       raise """
@@ -122,13 +128,9 @@ if config_env() == :prod do
       For example: api.myapp.com
       """
 
-  config :supapasskeys, SupapasskeysWeb.Plugs.ApiAuth, api_domain: api_domain
-
-  multi_tenancy =
-    case System.get_env("SUPAPASSKEYS_MULTI_TENANCY") do
-      "yes" -> true
-      _ -> false
-    end
+  config :supapasskeys, SupapasskeysWeb.Plugs.ApiAuth,
+    multi_tenancy: multi_tenancy,
+    api_domain: api_domain
 
   relying_party_name =
     System.get_env("SUPAPASSKEYS_RELYING_PARTY_NAME") ||
@@ -145,7 +147,6 @@ if config_env() == :prod do
       """
 
   config :supapasskeys, Supapasskeys.Passkeys,
-    multi_tenancy: multi_tenancy,
     relying_party_name: relying_party_name,
     relying_party_origin: relying_party_origin
 end

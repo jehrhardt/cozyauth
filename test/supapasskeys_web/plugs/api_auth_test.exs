@@ -20,12 +20,20 @@ defmodule SupapasskeysWeb.Plugs.ApiAuthTest do
   describe "call/2" do
     test "returns 404 Not Found when subdomain is not found", %{conn: conn} do
       invalid_conn = Map.put(conn, :host, "#{Faker.Internet.domain_word()}.example.com")
-      conn = SupapasskeysWeb.Plugs.ApiAuth.call(invalid_conn, api_domain: "example.com")
+
+      conn =
+        SupapasskeysWeb.Plugs.ApiAuth.call(invalid_conn,
+          api_domain: "example.com",
+          multi_tenancy: true
+        )
+
       assert json_response(conn, 404)["error"] == "Invalid API domain"
     end
 
     test "returns 404 Not Found when api domain is incorrect", %{conn: conn} do
-      conn = SupapasskeysWeb.Plugs.ApiAuth.call(conn, api_domain: "incorrect.com")
+      conn =
+        SupapasskeysWeb.Plugs.ApiAuth.call(conn, api_domain: "incorrect.com", multi_tenancy: true)
+
       assert json_response(conn, 404)["error"] == "Invalid Subdomain domain"
     end
 
@@ -33,7 +41,9 @@ defmodule SupapasskeysWeb.Plugs.ApiAuthTest do
       conn: conn,
       server: server
     } do
-      conn = SupapasskeysWeb.Plugs.ApiAuth.call(conn, api_domain: "example.com")
+      conn =
+        SupapasskeysWeb.Plugs.ApiAuth.call(conn, api_domain: "example.com", multi_tenancy: true)
+
       assert conn.status != 404
       assert get_req_header(conn, "x-supapasskeys-server-id") |> List.first() == server.id
 
@@ -43,11 +53,25 @@ defmodule SupapasskeysWeb.Plugs.ApiAuthTest do
       assert get_req_header(conn, "x-supapasskeys-server-relying-party-origin") |> List.first() ==
                server.relying_party_origin
     end
+
+    test "adds relying party when multi tenancy is disabled", %{conn: conn} do
+      conn =
+        SupapasskeysWeb.Plugs.ApiAuth.call(conn, api_domain: "example.com", multi_tenancy: false)
+
+      assert conn.status != 404
+
+      assert get_req_header(conn, "x-supapasskeys-server-relying-party-name") |> List.first() ==
+               "Supapasskeys"
+
+      assert get_req_header(conn, "x-supapasskeys-server-relying-party-origin") |> List.first() ==
+               "http://localhost:4000"
+    end
   end
 
   describe "init/1" do
     test "sets api domain from config" do
-      assert SupapasskeysWeb.Plugs.ApiAuth.init([])[:api_domain] == "example.com"
+      assert [api_domain: "example.com", multi_tenancy: false] ==
+               SupapasskeysWeb.Plugs.ApiAuth.init([])
     end
   end
 end
