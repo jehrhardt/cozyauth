@@ -1,4 +1,4 @@
-defmodule SupapasskeysWeb.ApiAuth do
+defmodule SupapasskeysWeb.Plugs.ApiAuth do
   alias Supapasskeys.Passkeys
   @behaviour Plug
   import Plug.Conn
@@ -9,7 +9,7 @@ defmodule SupapasskeysWeb.ApiAuth do
   @impl true
   def call(conn, _opts) do
     api_domain =
-      Application.get_env(:supapasskeys, SupapasskeysWeb.ApiAuth)
+      Application.get_env(:supapasskeys, SupapasskeysWeb.Plugs.ApiAuth)
       |> Keyword.get(:api_domain)
 
     server =

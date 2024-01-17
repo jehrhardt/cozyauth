@@ -122,7 +122,7 @@ if config_env() == :prod do
       For example: api.myapp.com
       """
 
-  config :supapasskeys, SupapasskeysWeb.ApiAuth, api_domain: api_domain
+  config :supapasskeys, SupapasskeysWeb.Plugs.ApiAuth, api_domain: api_domain
 
   multi_tenancy =
     case System.get_env("SUPAPASSKEYS_MULTI_TENANCY") do
