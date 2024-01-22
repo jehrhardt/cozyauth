@@ -82,6 +82,4 @@ config :phoenix_live_view, :debug_heex_annotations, true
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
-config :supapasskeys, SupapasskeysWeb.Plugs.ApiAuth,
-  multi_tenancy: true,
-  api_domain: "supapasskeys.local"
+config :supapasskeys, SupapasskeysWeb.Plugs.ApiAuth, api_domain: "supapasskeys.local"
