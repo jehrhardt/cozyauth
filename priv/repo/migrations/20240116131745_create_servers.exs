@@ -2,13 +2,15 @@ defmodule Supapasskeys.Repo.Migrations.CreateServers do
   use Ecto.Migration
 
   def change do
-    create table(:servers, primary_key: false) do
-      add :id, :binary_id, primary_key: true
-      add :relying_party_name, :string
-      add :relying_party_origin, :string
-      add :subdomain, :string
-
-      timestamps(type: :utc_datetime)
-    end
+    execute "create table servers (
+      id uuid not null default gen_random_uuid(),
+      inserted_at timestamp with time zone not null default now(),
+      updated_at timestamp with time zone not null default now(),
+      relying_party_name character varying not null,
+      relying_party_origin character varying not null,
+      subdomain character varying not null,
+      constraint servers_pkey primary key (id),
+      constraint servers_subdomain_key unique (subdomain)
+    )"
   end
 end

@@ -2,11 +2,12 @@ defmodule Supapasskeys.ServerRepo.Migrations.CreatePasskeys do
   use Ecto.Migration
 
   def change do
-    create table(:passkeys, primary_key: false) do
-      add :id, :binary_id, primary_key: true
-      add :key, :jsonb, null: false
-
-      timestamps(type: :utc_datetime)
-    end
+    execute "create table passkeys (
+      id uuid not null default gen_random_uuid(),
+      inserted_at timestamp with time zone not null default now(),
+      updated_at timestamp with time zone not null default now(),
+      key jsonb not null,
+      constraint passkeys_pkey primary key (id)
+    )"
   end
 end
