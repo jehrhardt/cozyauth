@@ -9,8 +9,14 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-Supapasskeys.Repo.insert(%Supapasskeys.Servers.Server{
-  relying_party_name: "Supapasskeys",
-  relying_party_origin: "https://localhost:4000",
-  subdomain: "test1"
-})
+{:ok, server} =
+  Supapasskeys.Repo.insert(%Supapasskeys.Servers.Server{
+    relying_party_name: "Supapasskeys",
+    relying_party_origin: "https://localhost:4000",
+    subdomain: "test1",
+    password: "supapasskeys",
+    host: "localhost",
+    port: 54329
+  })
+
+Supapasskeys.Servers.migrate_server(server)

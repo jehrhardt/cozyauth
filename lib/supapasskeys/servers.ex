@@ -1,6 +1,7 @@
 defmodule Supapasskeys.Servers do
   alias Supapasskeys.Servers.Server
-  alias Supapasskeys.ServerRepo, as: Repo
+  alias Supapasskeys.Repo
+  alias Supapasskeys.ServerRepo
 
   @doc """
   Returns the list of servers.
@@ -110,5 +111,14 @@ defmodule Supapasskeys.Servers do
   """
   def change_server(%Server{} = server, attrs \\ %{}) do
     Server.changeset(server, attrs)
+  end
+
+  def migrate_server(%Server{schema_name: schema_name} = server) do
+    ServerRepo.with_dynamic_repo(server, fn ->
+      Ecto.Migrator.run(ServerRepo, :up, all: true, prefix: schema_name || "supapasskeys")
+    end)
+
+    change_server(server, %{migrated_at: DateTime.utc_now()})
+    |> Repo.update()
   end
 end

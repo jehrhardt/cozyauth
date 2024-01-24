@@ -13,6 +13,7 @@ defmodule Supapasskeys.Servers.Server do
     field :host, :string
     field :database_name, :string
     field :port, :integer
+    field :schema_name, :string
     field :migrated_at, :utc_datetime
 
     timestamps(type: :utc_datetime)
@@ -30,6 +31,7 @@ defmodule Supapasskeys.Servers.Server do
       :host,
       :database_name,
       :port,
+      :schema_name,
       :migrated_at
     ])
     |> validate_required([
