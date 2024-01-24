@@ -1,5 +1,5 @@
 defmodule SupapasskeysWeb.Plugs.ApiAuth do
-  alias Supapasskeys.Passkeys
+  alias Supapasskeys.Servers
   @behaviour Plug
   import Plug.Conn
 
@@ -16,7 +16,7 @@ defmodule SupapasskeysWeb.Plugs.ApiAuth do
       server =
         conn.host
         |> String.replace(".#{api_domain}", "")
-        |> Passkeys.get_server_by_subdomain()
+        |> Servers.get_server_by_subdomain()
 
       case server do
         nil ->

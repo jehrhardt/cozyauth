@@ -1,12 +1,12 @@
 defmodule SupapasskeysWeb.ServerLive.Index do
   use SupapasskeysWeb, :live_view
 
-  alias Supapasskeys.Passkeys
+  alias Supapasskeys.Servers
   alias Supapasskeys.Servers.Server
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :servers, Passkeys.list_servers())}
+    {:ok, stream(socket, :servers, Servers.list_servers())}
   end
 
   @impl true
@@ -17,7 +17,7 @@ defmodule SupapasskeysWeb.ServerLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Server")
-    |> assign(:server, Passkeys.get_server!(id))
+    |> assign(:server, Servers.get_server!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -39,8 +39,8 @@ defmodule SupapasskeysWeb.ServerLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    server = Passkeys.get_server!(id)
-    {:ok, _} = Passkeys.delete_server(server)
+    server = Servers.get_server!(id)
+    {:ok, _} = Servers.delete_server(server)
 
     {:noreply, stream_delete(socket, :servers, server)}
   end

@@ -23,7 +23,9 @@ defmodule Supapasskeys.ServersTest do
       valid_attrs = %{
         relying_party_name: "some relying_party_name",
         relying_party_origin: "some relying_party_origin",
-        subdomain: Faker.Internet.domain_word()
+        subdomain: Faker.Internet.domain_word(),
+        password: Faker.String.base64(32),
+        host: Faker.Internet.domain_name()
       }
 
       assert {:ok, %Server{} = server} = Servers.create_server(valid_attrs)

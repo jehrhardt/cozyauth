@@ -1,7 +1,7 @@
 defmodule SupapasskeysWeb.ServerLive.Show do
   use SupapasskeysWeb, :live_view
 
-  alias Supapasskeys.Passkeys
+  alias Supapasskeys.Servers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,7 +13,7 @@ defmodule SupapasskeysWeb.ServerLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:server, Passkeys.get_server!(id))}
+     |> assign(:server, Servers.get_server!(id))}
   end
 
   defp page_title(:show), do: "Show Server"

@@ -1,7 +1,7 @@
 defmodule SupapasskeysWeb.ServerLive.FormComponent do
   use SupapasskeysWeb, :live_component
 
-  alias Supapasskeys.Passkeys
+  alias Supapasskeys.Servers
 
   @impl true
   def render(assigns) do
@@ -32,7 +32,7 @@ defmodule SupapasskeysWeb.ServerLive.FormComponent do
 
   @impl true
   def update(%{server: server} = assigns, socket) do
-    changeset = Passkeys.change_server(server)
+    changeset = Servers.change_server(server)
 
     {:ok,
      socket
@@ -44,7 +44,7 @@ defmodule SupapasskeysWeb.ServerLive.FormComponent do
   def handle_event("validate", %{"server" => server_params}, socket) do
     changeset =
       socket.assigns.server
-      |> Passkeys.change_server(server_params)
+      |> Servers.change_server(server_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
@@ -55,7 +55,7 @@ defmodule SupapasskeysWeb.ServerLive.FormComponent do
   end
 
   defp save_server(socket, :edit, server_params) do
-    case Passkeys.update_server(socket.assigns.server, server_params) do
+    case Servers.update_server(socket.assigns.server, server_params) do
       {:ok, server} ->
         notify_parent({:saved, server})
 
@@ -70,7 +70,7 @@ defmodule SupapasskeysWeb.ServerLive.FormComponent do
   end
 
   defp save_server(socket, :new, server_params) do
-    case Passkeys.create_server(server_params) do
+    case Servers.create_server(server_params) do
       {:ok, server} ->
         notify_parent({:saved, server})
 
