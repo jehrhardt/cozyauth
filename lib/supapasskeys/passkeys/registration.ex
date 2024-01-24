@@ -4,6 +4,7 @@ defmodule Supapasskeys.Passkeys.Registration do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @schema_prefix "supapasskeys"
   schema "registrations" do
     field :state, :string
     field :user_id, Ecto.UUID

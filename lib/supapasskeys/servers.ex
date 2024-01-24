@@ -113,9 +113,9 @@ defmodule Supapasskeys.Servers do
     Server.changeset(server, attrs)
   end
 
-  def migrate_server(%Server{schema_name: schema_name} = server) do
+  def migrate_server(%Server{} = server) do
     ServerRepo.with_dynamic_repo(server, fn ->
-      Ecto.Migrator.run(ServerRepo, :up, all: true, prefix: schema_name || "supapasskeys")
+      Ecto.Migrator.run(ServerRepo, :up, all: true)
     end)
 
     change_server(server, %{migrated_at: DateTime.utc_now()})

@@ -4,6 +4,7 @@ defmodule Supapasskeys.Passkeys.Passkey do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @schema_prefix "supapasskeys"
   schema "passkeys" do
     field :key, :string
     timestamps(type: :utc_datetime)

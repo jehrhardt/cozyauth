@@ -2,7 +2,7 @@ defmodule Supapasskeys.ServerRepo.Migrations.CreateRegistrations do
   use Ecto.Migration
 
   def change do
-    execute "create table registrations (
+    execute "create table supapasskeys.registrations (
       id uuid not null default gen_random_uuid(),
       inserted_at timestamp with time zone not null default now(),
       updated_at timestamp with time zone not null default now(),

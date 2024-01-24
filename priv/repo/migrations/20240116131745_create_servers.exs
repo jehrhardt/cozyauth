@@ -14,7 +14,6 @@ defmodule Supapasskeys.Repo.Migrations.CreateServers do
       host character varying not null,
       database_name character varying null,
       port integer null,
-      schema_name character varying null,
       migrated_at timestamp with time zone null,
       constraint servers_pkey primary key (id),
       constraint servers_subdomain_key unique (subdomain)
