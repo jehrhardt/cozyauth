@@ -2,7 +2,7 @@ defmodule SupapasskeysWeb.ServerLive.Index do
   use SupapasskeysWeb, :live_view
 
   alias Supapasskeys.Passkeys
-  alias Supapasskeys.Passkeys.Server
+  alias Supapasskeys.Servers.Server
 
   @impl true
   def mount(_params, _session, socket) do

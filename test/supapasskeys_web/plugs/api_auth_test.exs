@@ -1,13 +1,13 @@
 defmodule SupapasskeysWeb.Plugs.ApiAuthTest do
-  alias Supapasskeys.Passkeys
+  alias Supapasskeys.Servers
   use SupapasskeysWeb.ConnCase
 
   setup %{conn: conn} do
-    import Supapasskeys.PasskeysFixtures
+    import Supapasskeys.ServersFixtures
     server = server_fixture()
 
     on_exit(fn ->
-      Passkeys.delete_server(server)
+      Servers.delete_server(server)
     end)
 
     {:ok,

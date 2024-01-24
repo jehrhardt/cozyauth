@@ -1,12 +1,12 @@
 defmodule Supapasskeys.PasskeysTest do
-  alias Supapasskeys.WebAuthn.RelyingParty
   use Supapasskeys.DataCase
 
   alias Supapasskeys.Passkeys
+  alias Supapasskeys.Passkeys.Registration
+  alias Supapasskeys.WebAuthn.RelyingParty
 
   describe "registrations" do
-    alias Supapasskeys.Passkeys.Registration
-
+    import Supapasskeys.ServersFixtures
     import Supapasskeys.PasskeysFixtures
 
     @invalid_attrs %{state: nil, user_id: nil}
@@ -75,70 +75,6 @@ defmodule Supapasskeys.PasskeysTest do
                Passkeys.update_registration(registration, @invalid_attrs)
 
       assert registration == Passkeys.get_registration!(registration.id)
-    end
-  end
-
-  describe "servers" do
-    alias Supapasskeys.Passkeys.Server
-
-    import Supapasskeys.PasskeysFixtures
-
-    @invalid_attrs %{relying_party_name: nil, relying_party_origin: nil}
-
-    test "list_servers/0 returns all servers" do
-      server = server_fixture()
-      assert Passkeys.list_servers() == [server]
-    end
-
-    test "get_server!/1 returns the server with given id" do
-      server = server_fixture()
-      assert Passkeys.get_server!(server.id) == server
-    end
-
-    test "create_server/1 with valid data creates a server" do
-      valid_attrs = %{
-        relying_party_name: "some relying_party_name",
-        relying_party_origin: "some relying_party_origin",
-        subdomain: Faker.Internet.domain_word()
-      }
-
-      assert {:ok, %Server{} = server} = Passkeys.create_server(valid_attrs)
-      assert server.relying_party_name == "some relying_party_name"
-      assert server.relying_party_origin == "some relying_party_origin"
-    end
-
-    test "create_server/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Passkeys.create_server(@invalid_attrs)
-    end
-
-    test "update_server/2 with valid data updates the server" do
-      server = server_fixture()
-
-      update_attrs = %{
-        relying_party_name: "some updated relying_party_name",
-        relying_party_origin: "some updated relying_party_origin"
-      }
-
-      assert {:ok, %Server{} = server} = Passkeys.update_server(server, update_attrs)
-      assert server.relying_party_name == "some updated relying_party_name"
-      assert server.relying_party_origin == "some updated relying_party_origin"
-    end
-
-    test "update_server/2 with invalid data returns error changeset" do
-      server = server_fixture()
-      assert {:error, %Ecto.Changeset{}} = Passkeys.update_server(server, @invalid_attrs)
-      assert server == Passkeys.get_server!(server.id)
-    end
-
-    test "delete_server/1 deletes the server" do
-      server = server_fixture()
-      assert {:ok, %Server{}} = Passkeys.delete_server(server)
-      assert_raise Ecto.NoResultsError, fn -> Passkeys.get_server!(server.id) end
-    end
-
-    test "change_server/1 returns a server changeset" do
-      server = server_fixture()
-      assert %Ecto.Changeset{} = Passkeys.change_server(server)
     end
   end
 end

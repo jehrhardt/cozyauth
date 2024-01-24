@@ -2,7 +2,7 @@ defmodule SupapasskeysWeb.ServerLiveTest do
   use SupapasskeysWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import Supapasskeys.PasskeysFixtures
+  import Supapasskeys.ServersFixtures
 
   @create_attrs %{
     relying_party_name: "some relying_party_name",
