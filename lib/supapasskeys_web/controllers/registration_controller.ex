@@ -1,6 +1,7 @@
 defmodule SupapasskeysWeb.RegistrationController do
   use SupapasskeysWeb, :controller
 
+  alias Supapasskeys.Servers
   alias Supapasskeys.WebAuthn.RelyingParty
   alias Supapasskeys.Passkeys
   alias Supapasskeys.Passkeys.Registration
@@ -13,8 +14,11 @@ defmodule SupapasskeysWeb.RegistrationController do
       origin: get_req_header(conn, "x-supapasskeys-server-relying-party-origin") |> List.first()
     }
 
-    with {:ok, %Registration{} = registration} <-
-           Passkeys.create_registration(relying_party, user_params) do
+    server_id = get_req_header(conn, "x-supapasskeys-server-id") |> List.first()
+
+    with server <- Servers.get_server!(server_id),
+         {:ok, %Registration{} = registration} <-
+           Passkeys.create_registration(server, relying_party, user_params) do
       conn
       |> put_status(:ok)
       |> render(:show, registration: registration)
@@ -30,10 +34,17 @@ defmodule SupapasskeysWeb.RegistrationController do
       origin: get_req_header(conn, "x-supapasskeys-server-relying-party-origin")
     }
 
-    registration = Passkeys.get_registration!(id)
+    server_id = get_req_header(conn, "x-supapasskeys-server-id") |> List.first()
 
-    with {:ok, %Registration{} = registration} <-
-           Passkeys.confirm_registration(relying_party, registration, public_key_credential_json) do
+    with server <- Servers.get_server!(server_id),
+         registration <- Passkeys.get_registration!(server, id),
+         {:ok, %Registration{} = registration} <-
+           Passkeys.confirm_registration(
+             server,
+             relying_party,
+             registration,
+             public_key_credential_json
+           ) do
       render(conn, :confirmed, registration: registration)
     end
   end

@@ -4,9 +4,10 @@ defmodule Supapasskeys.Passkeys do
   """
 
   import Ecto.Query, warn: false
+  alias Supapasskeys.Servers.Server
   alias Supapasskeys.WebAuthn.RelyingParty
   alias Supapasskeys.WebAuthn
-  alias Supapasskeys.Repo
+  alias Supapasskeys.ServerRepo
 
   alias Supapasskeys.Passkeys.Registration
   alias Supapasskeys.Passkeys.User
@@ -18,28 +19,32 @@ defmodule Supapasskeys.Passkeys do
 
   ## Examples
 
-      iex> get_registration!(123)
+      iex> get_registration!(%Server{}, 123)
       %Registration{}
 
-      iex> get_registration!(456)
+      iex> get_registration!(%Server{}, 456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_registration!(id), do: Repo.get!(Registration, id)
+  def get_registration!(%Server{} = server, id) do
+    ServerRepo.with_dynamic_repo(server, fn ->
+      ServerRepo.get!(Registration, id)
+    end)
+  end
 
   @doc """
   Creates a registration.
 
   ## Examples
 
-      iex> create_registration(%{field: value})
+      iex> create_registration(%Server{}, %{field: value})
       {:ok, %Registration{}}
 
-      iex> create_registration(%{field: bad_value})
+      iex> create_registration(%Server{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_registration(%RelyingParty{} = relying_party, attrs \\ %{}) do
+  def create_registration(%Server{} = server, %RelyingParty{} = relying_party, attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
     |> User.to_webauthn_user()
@@ -48,17 +53,19 @@ defmodule Supapasskeys.Passkeys do
         {creation_options_json, state_json} =
           WebAuthn.start_passkey_registration(user, relying_party)
 
-        %Registration{}
-        |> Registration.changeset(
-          %{}
-          |> Map.put(:state, state_json)
-          |> Map.put(:user_id, user.id)
-        )
-        |> Repo.insert()
-        |> case do
-          {:ok, registration} ->
-            {:ok, registration |> Map.put(:creation_options, creation_options_json)}
-        end
+        ServerRepo.with_dynamic_repo(server, fn ->
+          %Registration{}
+          |> Registration.changeset(
+            %{}
+            |> Map.put(:state, state_json)
+            |> Map.put(:user_id, user.id)
+          )
+          |> ServerRepo.insert()
+          |> case do
+            {:ok, registration} ->
+              {:ok, registration |> Map.put(:creation_options, creation_options_json)}
+          end
+        end)
 
       {:error, changeset} ->
         {:error, changeset}
@@ -70,17 +77,19 @@ defmodule Supapasskeys.Passkeys do
 
   ## Examples
 
-      iex> update_registration(registration, %{field: new_value})
+      iex> update_registration(%Server{}, %Registration{}, %{field: new_value})
       {:ok, %Registration{}}
 
-      iex> update_registration(registration, %{field: bad_value})
+      iex> update_registration(%Server{}, %Registration{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_registration(%Registration{} = registration, attrs) do
-    registration
-    |> Registration.changeset(attrs)
-    |> Repo.update()
+  def update_registration(%Server{} = server, %Registration{} = registration, attrs) do
+    ServerRepo.with_dynamic_repo(server, fn ->
+      registration
+      |> Registration.changeset(attrs)
+      |> ServerRepo.update()
+    end)
   end
 
   @doc """
@@ -88,14 +97,15 @@ defmodule Supapasskeys.Passkeys do
 
   ## Examples
 
-      iex> confirm_registration(registration, public_key_credentials_json)
+      iex> confirm_registration(%Server{}, %RelyingParty{}, %Registration{}, public_key_credentials_json)
       {:ok, %Registration{}}
 
-      iex> confirm_registration(registration, public_key_credentials_json)
+      iex> confirm_registration(%Server{}, %RelyingParty{}, %Registration{}, public_key_credentials_json)
       {:error, %Ecto.Changeset{}}
 
   """
   def confirm_registration(
+        %Server{} = server,
         %RelyingParty{} = relying_party,
         %Registration{} = registration,
         public_key_credentials_json
@@ -107,6 +117,6 @@ defmodule Supapasskeys.Passkeys do
         relying_party
       )
 
-    update_registration(registration, %{state: nil, confirmed_at: DateTime.utc_now()})
+    update_registration(server, registration, %{state: nil, confirmed_at: DateTime.utc_now()})
   end
 end

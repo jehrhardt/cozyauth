@@ -7,7 +7,7 @@ defmodule Supapasskeys.PasskeysFixtures do
   @doc """
   Generate a registration.
   """
-  def registration_fixture(relying_party, attrs \\ %{}) do
+  def registration_fixture(server, relying_party, attrs \\ %{}) do
     user =
       attrs
       |> Enum.into(%{
@@ -16,7 +16,7 @@ defmodule Supapasskeys.PasskeysFixtures do
         display_name: Faker.Person.name()
       })
 
-    {:ok, registration} = Supapasskeys.Passkeys.create_registration(relying_party, user)
+    {:ok, registration} = Supapasskeys.Passkeys.create_registration(server, relying_party, user)
     registration |> Map.update!(:creation_options, fn _ -> nil end)
   end
 end
