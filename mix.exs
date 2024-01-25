@@ -51,6 +51,7 @@ defmodule Supapasskeys.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
+      {:cachex, "~> 3.6"},
       {:rustler, "~> 0.30.0"},
       {:faker, "~> 0.17", only: :test},
       {:uuid, "~> 1.1", only: :test}
