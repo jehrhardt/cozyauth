@@ -11,6 +11,8 @@ defmodule Supapasskeys.Passkeys.Registration do
     field :confirmed_at, :utc_datetime
     field :creation_options, :string, virtual: true
 
+    belongs_to :relying_party, Supapasskeys.Passkeys.RelyingParty, foreign_key: :relying_party_id
+
     timestamps(type: :utc_datetime)
   end
 

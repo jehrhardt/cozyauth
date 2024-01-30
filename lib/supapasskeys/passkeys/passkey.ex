@@ -8,6 +8,9 @@ defmodule Supapasskeys.Passkeys.Passkey do
   schema "passkeys" do
     field :user_id, Ecto.UUID
     field :key, :string
+
+    belongs_to :relying_party, Supapasskeys.Passkeys.RelyingParty, foreign_key: :relying_party_id
+
     timestamps(type: :utc_datetime)
   end
 

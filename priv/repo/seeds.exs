@@ -11,8 +11,6 @@
 # and so on) as they will fail if something goes wrong.
 {:ok, server} =
   Supapasskeys.Repo.insert(%Supapasskeys.Servers.Server{
-    relying_party_name: "Supapasskeys",
-    relying_party_origin: "https://localhost:4000",
     subdomain: "test1",
     password: "supapasskeys",
     host: "localhost",

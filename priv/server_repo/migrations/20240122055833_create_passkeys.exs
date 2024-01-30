@@ -10,6 +10,7 @@ defmodule Supapasskeys.ServerRepo.Migrations.CreatePasskeys do
       key jsonb not null,
       constraint passkeys_pkey primary key (id)
     )"
+
     execute "create index if not exists passkeys_user_id_idx on supapasskeys.passkeys using btree (user_id)"
   end
 end

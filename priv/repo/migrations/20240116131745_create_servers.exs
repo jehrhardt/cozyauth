@@ -6,8 +6,6 @@ defmodule Supapasskeys.Repo.Migrations.CreateServers do
       id uuid not null default gen_random_uuid(),
       inserted_at timestamp with time zone not null default now(),
       updated_at timestamp with time zone not null default now(),
-      relying_party_name character varying not null,
-      relying_party_origin character varying not null,
       subdomain character varying not null,
       \"user\" character varying null,
       password character varying not null,

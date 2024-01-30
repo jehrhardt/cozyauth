@@ -11,6 +11,7 @@ defmodule Supapasskeys.ServerRepo.Migrations.CreateRegistrations do
       confirmed_at timestamp with time zone null,
       constraint registrations_pkey primary key (id)
     )"
+
     execute "create index if not exists registrations_user_id_idx on supapasskeys.registrations using btree (user_id)"
   end
 end

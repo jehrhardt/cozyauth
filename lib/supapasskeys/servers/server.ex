@@ -5,8 +5,6 @@ defmodule Supapasskeys.Servers.Server do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "servers" do
-    field :relying_party_name, :string
-    field :relying_party_origin, :string
     field :subdomain, :string
     field :user, :string
     field :password, :string
@@ -22,8 +20,6 @@ defmodule Supapasskeys.Servers.Server do
   def changeset(server, attrs) do
     server
     |> cast(attrs, [
-      :relying_party_name,
-      :relying_party_origin,
       :subdomain,
       :user,
       :password,
@@ -33,8 +29,6 @@ defmodule Supapasskeys.Servers.Server do
       :migrated_at
     ])
     |> validate_required([
-      :relying_party_name,
-      :relying_party_origin,
       :subdomain,
       :password,
       :host
