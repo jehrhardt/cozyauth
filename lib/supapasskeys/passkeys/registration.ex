@@ -6,8 +6,8 @@ defmodule Supapasskeys.Passkeys.Registration do
   @foreign_key_type :binary_id
   @schema_prefix "supapasskeys"
   schema "registrations" do
-    field :state, :string
     field :user_id, Ecto.UUID
+    field :state, :string
     field :confirmed_at, :utc_datetime
     field :creation_options, :string, virtual: true
 

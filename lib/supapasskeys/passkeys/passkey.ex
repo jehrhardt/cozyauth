@@ -6,6 +6,7 @@ defmodule Supapasskeys.Passkeys.Passkey do
   @foreign_key_type :binary_id
   @schema_prefix "supapasskeys"
   schema "passkeys" do
+    field :user_id, Ecto.UUID
     field :key, :string
     timestamps(type: :utc_datetime)
   end
@@ -13,7 +14,7 @@ defmodule Supapasskeys.Passkeys.Passkey do
   @doc false
   def changeset(passkey, attrs) do
     passkey
-    |> cast(attrs, [:key])
-    |> validate_required([:key])
+    |> cast(attrs, [:user_id, :key])
+    |> validate_required([:user_id, :key])
   end
 end
