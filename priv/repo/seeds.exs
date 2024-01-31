@@ -9,12 +9,11 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-{:ok, server} =
-  Supapasskeys.Repo.insert(%Supapasskeys.Servers.Server{
-    subdomain: "test1",
-    password: "supapasskeys",
-    host: "localhost",
-    port: 54329
+{:ok, project} =
+  Supapasskeys.Repo.insert(%Supapasskeys.Supabase.Project{
+    name: "Supapasskeys",
+    reference_id: "supapasskeys",
+    database_url: "postgres://supapasskeys:supapasskeys@localhost:54329/postgres"
   })
 
-Supapasskeys.Servers.migrate_server(server)
+Supapasskeys.Supabase.migrate_database(project)

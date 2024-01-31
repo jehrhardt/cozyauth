@@ -1,7 +1,7 @@
-defmodule SupapasskeysWeb.ServerLive.Show do
+defmodule SupapasskeysWeb.ProjectLive.Show do
   use SupapasskeysWeb, :live_view
 
-  alias Supapasskeys.Servers
+  alias Supapasskeys.Supabase
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,9 +13,9 @@ defmodule SupapasskeysWeb.ServerLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:server, Servers.get_server!(id))}
+     |> assign(:project, Supabase.get_project!(id))}
   end
 
-  defp page_title(:show), do: "Show Server"
-  defp page_title(:edit), do: "Edit Server"
+  defp page_title(:show), do: "Show Project"
+  defp page_title(:edit), do: "Edit Project"
 end

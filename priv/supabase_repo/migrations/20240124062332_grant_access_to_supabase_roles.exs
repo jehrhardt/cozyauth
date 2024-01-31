@@ -1,4 +1,4 @@
-defmodule Supapasskeys.ServerRepo.Migrations.GrantAccessToSupabaseRoles do
+defmodule Supapasskeys.SupabaseRepo.Migrations.GrantAccessToSupabaseRoles do
   use Ecto.Migration
 
   def change do

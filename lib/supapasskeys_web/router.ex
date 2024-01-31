@@ -20,19 +20,19 @@ defmodule SupapasskeysWeb.Router do
 
     get "/", PageController, :home
 
-    live "/servers", ServerLive.Index, :index
-    live "/servers/new", ServerLive.Index, :new
-    live "/servers/:id/edit", ServerLive.Index, :edit
+    live "/projects", ProjectLive.Index, :index
+    live "/projects/new", ProjectLive.Index, :new
+    live "/projects/:id/edit", ProjectLive.Index, :edit
 
-    live "/servers/:id", ServerLive.Show, :show
-    live "/servers/:id/show/edit", ServerLive.Show, :edit
+    live "/projects/:id", ProjectLive.Show, :show
+    live "/projects/:id/show/edit", ProjectLive.Show, :edit
   end
 
   scope "/passkeys", SupapasskeysWeb do
     pipe_through :api
 
-    post "/", RegistrationController, :create
-    patch "/registrations/:id", RegistrationController, :update
+    post "/:relying_party_id", RegistrationController, :create
+    patch "/:relying_party_id/registrations/:registration_id", RegistrationController, :update
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

@@ -1,46 +1,37 @@
 defmodule SupapasskeysWeb.RegistrationController do
   use SupapasskeysWeb, :controller
 
-  alias Supapasskeys.Servers
-  alias Supapasskeys.WebAuthn.RelyingParty
+  alias Supapasskeys.Supabase
   alias Supapasskeys.Passkeys
   alias Supapasskeys.Passkeys.Registration
 
   action_fallback SupapasskeysWeb.FallbackController
 
-  def create(conn, user_params) do
-    relying_party = %RelyingParty{
-      name: get_req_header(conn, "x-supapasskeys-server-relying-party-name") |> List.first(),
-      origin: get_req_header(conn, "x-supapasskeys-server-relying-party-origin") |> List.first()
-    }
+  def create(conn, %{"relying_party_id" => relying_party_id} = params) do
+    user_params = Map.take(params, ["id", "name", "display_name"])
+    reference_id = get_req_header(conn, "x-supabase-reference-id") |> List.first()
+    project = Supabase.get_project_by_reference_id(reference_id)
+    relying_party = Passkeys.get_relying_party!(project, relying_party_id)
 
-    server_id = get_req_header(conn, "x-supapasskeys-server-id") |> List.first()
-
-    with server <- Servers.get_server!(server_id),
-         {:ok, %Registration{} = registration} <-
-           Passkeys.create_registration(server, relying_party, user_params) do
+    with {:ok, %Registration{} = registration} <-
+           Passkeys.create_registration(project, relying_party, user_params) do
       conn
       |> put_status(:ok)
       |> render(:show, registration: registration)
     end
   end
 
-  def update(conn, %{"id" => id}) do
+  def update(conn, %{"relying_party_id" => relying_party_id, "registration_id" => registration_id}) do
     # Read the body of the request as string
     {:ok, public_key_credential_json, conn} = Plug.Conn.read_body(conn)
+    reference_id = get_req_header(conn, "x-supabase-reference-id") |> List.first()
+    project = Supabase.get_project_by_reference_id(reference_id)
+    relying_party = Passkeys.get_relying_party!(project, relying_party_id)
+    registration = Passkeys.get_registration!(project, registration_id)
 
-    relying_party = %RelyingParty{
-      name: get_req_header(conn, "x-supapasskeys-server-relying-party-name"),
-      origin: get_req_header(conn, "x-supapasskeys-server-relying-party-origin")
-    }
-
-    server_id = get_req_header(conn, "x-supapasskeys-server-id") |> List.first()
-
-    with server <- Servers.get_server!(server_id),
-         registration <- Passkeys.get_registration!(server, id),
-         {:ok, %Registration{} = registration} <-
+    with {:ok, %Registration{} = registration} <-
            Passkeys.confirm_registration(
-             server,
+             project,
              relying_party,
              registration,
              public_key_credential_json

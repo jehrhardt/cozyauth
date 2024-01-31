@@ -1,4 +1,4 @@
-defmodule Supapasskeys.ServerRepo.Migrations.CreatePasskeys do
+defmodule Supapasskeys.SupabaseRepo.Migrations.CreatePasskeys do
   use Ecto.Migration
 
   def change do

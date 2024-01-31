@@ -4,7 +4,8 @@ defmodule Supapasskeys.Passkeys.RelyingParty do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "relying_party" do
+  @schema_prefix "supapasskeys"
+  schema "relying_parties" do
     field :name, :string
     field :origin, :string
 
