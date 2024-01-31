@@ -130,9 +130,10 @@ defmodule Supapasskeys.Passkeys do
       [%RelyingParty{}, ...]
 
   """
-  def list_relying_parties(%Project{} = project) do
+  def list_relying_parties(%Project{id: project_id} = project) do
     SupabaseRepo.with_dynamic_repo(project, fn ->
-      SupabaseRepo.all(RelyingParty)
+      from(r in RelyingParty, where: r.project_id == ^project_id)
+      |> SupabaseRepo.all()
     end)
   end
 
@@ -168,10 +169,10 @@ defmodule Supapasskeys.Passkeys do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_relying_party(%Project{} = project, attrs \\ %{}) do
+  def create_relying_party(%Project{id: project_id} = project, attrs \\ %{}) do
     SupabaseRepo.with_dynamic_repo(project, fn ->
       %RelyingParty{}
-      |> RelyingParty.changeset(attrs)
+      |> RelyingParty.changeset(attrs |> Map.put(:project_id, project_id))
       |> SupabaseRepo.insert()
     end)
   end
