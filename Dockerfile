@@ -1,4 +1,4 @@
-FROM hexpm/elixir:1.16.0-erlang-26.2.1-ubuntu-jammy-20231004 as builder
+FROM hexpm/elixir:1.16.1-erlang-26.2.1-ubuntu-jammy-20231004 as builder
 
 # install build dependencies
 RUN apt-get update -y \
@@ -48,7 +48,7 @@ COPY config/runtime.exs config/
 COPY rel rel
 RUN mix release
 
-FROM ubuntu:jammy-20231211.1
+FROM ubuntu:jammy-20240125
 
 RUN apt-get update -y \
   && apt-get install -y \
