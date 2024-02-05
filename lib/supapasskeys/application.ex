@@ -17,7 +17,8 @@ defmodule Supapasskeys.Application do
       # Start a worker by calling: Supapasskeys.Worker.start_link(arg)
       # {Supapasskeys.Worker, arg},
       # Start to serve requests, typically the last entry
-      SupapasskeysWeb.Endpoint
+      SupapasskeysWeb.Endpoint,
+      {Cachex, name: :supabase_projects}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

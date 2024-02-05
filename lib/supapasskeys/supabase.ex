@@ -53,7 +53,11 @@ defmodule Supapasskeys.Supabase do
 
   """
   def get_project_by_reference_id(reference_id) when is_binary(reference_id) do
-    Repo.get_by(Project, reference_id: reference_id)
+    case Cachex.fetch(:supabase_projects, reference_id, fn ->
+           {:commit, Repo.get_by(Project, reference_id: reference_id)}
+         end) do
+      {_, project} -> project
+    end
   end
 
   @doc """
@@ -69,9 +73,14 @@ defmodule Supapasskeys.Supabase do
 
   """
   def create_project(attrs \\ %{}) do
-    %Project{}
-    |> Project.changeset(attrs)
-    |> Repo.insert()
+    case %Project{} |> Project.changeset(attrs) |> Repo.insert() do
+      {:ok, project} ->
+        Cachex.put(:supabase_projects, project.reference_id, project)
+        {:ok, project}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -87,9 +96,14 @@ defmodule Supapasskeys.Supabase do
 
   """
   def update_project(%Project{} = project, attrs) do
-    project
-    |> Project.changeset(attrs)
-    |> Repo.update()
+    case project |> change_project(attrs) |> Repo.update() do
+      {:ok, project} ->
+        Cachex.put(:supabase_projects, project.reference_id, project)
+        {:ok, project}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -105,6 +119,7 @@ defmodule Supapasskeys.Supabase do
 
   """
   def delete_project(%Project{} = project) do
+    Cachex.del(:supabase_projects, project.reference_id)
     Repo.delete(project)
   end
 
