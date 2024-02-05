@@ -26,8 +26,8 @@ config :supapasskeys, SupapasskeysWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "/denOvzsCUHhyDAb51nEZ1PM1JEMpzt7+q5P3BiZD4Busd4T99EkalwUovDsVvmw",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:supapasskeys, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:supapasskeys, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -57,7 +57,7 @@ config :supapasskeys, SupapasskeysWeb.Endpoint,
 config :supapasskeys, SupapasskeysWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/supapasskeys_web/(controllers|live|components)/.*(ex|heex)$"
     ]
