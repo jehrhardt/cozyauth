@@ -4,24 +4,12 @@ defmodule Supapasskeys.Passkeys do
   """
 
   import Ecto.Query, warn: false
+  alias Supapasskeys.Supabase.Project
   alias Supapasskeys.WebAuthn
-  alias Supapasskeys.Repo
-
+  alias Supapasskeys.SupabaseRepo
   alias Supapasskeys.Passkeys.Registration
+  alias Supapasskeys.Passkeys.RelyingParty
   alias Supapasskeys.Passkeys.User
-
-  @doc """
-  Returns the list of registrations.
-
-  ## Examples
-
-      iex> list_registrations()
-      [%Registration{}, ...]
-
-  """
-  def list_registrations do
-    Repo.all(Registration)
-  end
 
   @doc """
   Gets a single registration.
@@ -30,47 +18,55 @@ defmodule Supapasskeys.Passkeys do
 
   ## Examples
 
-      iex> get_registration!(123)
+      iex> get_registration!(%Project{}, 123)
       %Registration{}
 
-      iex> get_registration!(456)
+      iex> get_registration!(%Project{}, 456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_registration!(id), do: Repo.get!(Registration, id)
+  def get_registration!(%Project{} = project, id) do
+    SupabaseRepo.with_dynamic_repo(project, fn ->
+      SupabaseRepo.get!(Registration, id)
+    end)
+  end
 
   @doc """
   Creates a registration.
 
   ## Examples
 
-      iex> create_registration(%{field: value})
+      iex> create_registration(%Project{}, %RelyingParty{}, %{field: value})
       {:ok, %Registration{}}
 
-      iex> create_registration(%{field: bad_value})
+      iex> create_registration(%Project{}, %RelyingParty{},, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_registration(attrs \\ %{}) do
+  def create_registration(
+        %Project{} = project,
+        %RelyingParty{name: name, origin: origin} = relying_party,
+        attrs \\ %{}
+      ) do
+    webauthn_relying_party = %WebAuthn.RelyingParty{name: name, origin: origin}
+
     %User{}
     |> User.changeset(attrs)
     |> User.to_webauthn_user()
     |> case do
       {:ok, user} ->
         {creation_options_json, state_json} =
-          WebAuthn.start_passkey_registration(user, load_relying_party())
+          WebAuthn.start_passkey_registration(user, webauthn_relying_party)
 
-        %Registration{}
-        |> Registration.changeset(
-          %{}
-          |> Map.put(:state, state_json)
-          |> Map.put(:user_id, user.id)
-        )
-        |> Repo.insert()
-        |> case do
-          {:ok, registration} ->
-            {:ok, registration |> Map.put(:creation_options, creation_options_json)}
-        end
+        SupabaseRepo.with_dynamic_repo(project, fn ->
+          relying_party
+          |> Ecto.build_assoc(:registrations, state: state_json, user_id: user.id)
+          |> SupabaseRepo.insert()
+          |> case do
+            {:ok, registration} ->
+              {:ok, registration |> Map.put(:creation_options, creation_options_json)}
+          end
+        end)
 
       {:error, changeset} ->
         {:error, changeset}
@@ -82,17 +78,19 @@ defmodule Supapasskeys.Passkeys do
 
   ## Examples
 
-      iex> update_registration(registration, %{field: new_value})
+      iex> update_registration(%Project{}, %Registration{}, %{field: new_value})
       {:ok, %Registration{}}
 
-      iex> update_registration(registration, %{field: bad_value})
+      iex> update_registration(%Project{}, %Registration{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_registration(%Registration{} = registration, attrs) do
-    registration
-    |> Registration.changeset(attrs)
-    |> Repo.update()
+  def update_registration(%Project{} = project, %Registration{} = registration, attrs) do
+    SupabaseRepo.with_dynamic_repo(project, fn ->
+      registration
+      |> Registration.changeset(attrs)
+      |> SupabaseRepo.update()
+    end)
   end
 
   @doc """
@@ -100,59 +98,133 @@ defmodule Supapasskeys.Passkeys do
 
   ## Examples
 
-      iex> confirm_registration(registration, public_key_credentials_json)
+      iex> confirm_registration(%Project{}, %RelyingParty{}, %Registration{}, public_key_credentials_json)
       {:ok, %Registration{}}
 
-      iex> confirm_registration(registration, public_key_credentials_json)
+      iex> confirm_registration(%Project{}, %RelyingParty{}, %Registration{}, public_key_credentials_json)
       {:error, %Ecto.Changeset{}}
 
   """
-  def confirm_registration(%Registration{} = registration, public_key_credentials_json) do
+  def confirm_registration(
+        %Project{} = project,
+        %RelyingParty{name: name, origin: origin},
+        %Registration{} = registration,
+        public_key_credentials_json
+      ) do
     _passkey =
       WebAuthn.finish_passkey_registration(
         public_key_credentials_json,
         registration.state,
-        load_relying_party()
+        %WebAuthn.RelyingParty{name: name, origin: origin}
       )
 
-    update_registration(registration, %{state: nil, confirmed_at: DateTime.utc_now()})
+    update_registration(project, registration, %{state: nil, confirmed_at: DateTime.utc_now()})
   end
 
   @doc """
-  Deletes a registration.
+  Returns the list of relying_parties.
 
   ## Examples
 
-      iex> delete_registration(registration)
-      {:ok, %Registration{}}
+      iex> list_relying_parties(%Project{})
+      [%RelyingParty{}, ...]
 
-      iex> delete_registration(registration)
+  """
+  def list_relying_parties(%Project{id: project_id} = project) do
+    SupabaseRepo.with_dynamic_repo(project, fn ->
+      from(r in RelyingParty, where: r.project_id == ^project_id)
+      |> SupabaseRepo.all()
+    end)
+  end
+
+  @doc """
+  Gets a single relying_party.
+
+  Raises `Ecto.NoResultsError` if the Relying party does not exist.
+
+  ## Examples
+
+      iex> get_relying_party!(%Project{}, 123)
+      %RelyingParty{}
+
+      iex> get_relying_party!(%Project{}, 456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_relying_party!(%Project{} = project, id),
+    do:
+      SupabaseRepo.with_dynamic_repo(project, fn ->
+        SupabaseRepo.get!(RelyingParty, id)
+      end)
+
+  @doc """
+  Creates a relying_party.
+
+  ## Examples
+
+      iex> create_relying_party(%Project{}, %{field: value})
+      {:ok, %RelyingParty{}}
+
+      iex> create_relying_party(%Project{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_registration(%Registration{} = registration) do
-    Repo.delete(registration)
+  def create_relying_party(%Project{id: project_id} = project, attrs \\ %{}) do
+    SupabaseRepo.with_dynamic_repo(project, fn ->
+      %RelyingParty{}
+      |> RelyingParty.changeset(attrs |> Map.put(:project_id, project_id))
+      |> SupabaseRepo.insert()
+    end)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking registration changes.
+  Updates a relying_party.
 
   ## Examples
 
-      iex> change_registration(registration)
-      %Ecto.Changeset{data: %Registration{}}
+      iex> update_relying_party(%Project{}, relying_party, %{field: new_value})
+      {:ok, %RelyingParty{}}
+
+      iex> update_relying_party(%Project{}, relying_party, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
 
   """
-  def change_registration(%Registration{} = registration, attrs \\ %{}) do
-    Registration.changeset(registration, attrs)
+  def update_relying_party(%Project{} = project, %RelyingParty{} = relying_party, attrs) do
+    SupabaseRepo.with_dynamic_repo(project, fn ->
+      relying_party
+      |> RelyingParty.changeset(attrs)
+      |> SupabaseRepo.update()
+    end)
   end
 
-  defp load_relying_party() do
-    relying_party_config = Application.get_env(:supapasskeys, Supapasskeys.Passkeys)
+  @doc """
+  Deletes a relying_party.
 
-    %WebAuthn.RelyingParty{
-      name: relying_party_config[:relying_party_name],
-      origin: relying_party_config[:relying_party_origin]
-    }
+  ## Examples
+
+      iex> delete_relying_party(%Project{}, relying_party)
+      {:ok, %RelyingParty{}}
+
+      iex> delete_relying_party(%Project{}, relying_party)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_relying_party(%Project{} = project, %RelyingParty{} = relying_party) do
+    SupabaseRepo.with_dynamic_repo(project, fn ->
+      SupabaseRepo.delete(relying_party)
+    end)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking relying_party changes.
+
+  ## Examples
+
+      iex> change_relying_party(relying_party)
+      %Ecto.Changeset{data: %RelyingParty{}}
+
+  """
+  def change_relying_party(%RelyingParty{} = relying_party, attrs \\ %{}) do
+    RelyingParty.changeset(relying_party, attrs)
   end
 end

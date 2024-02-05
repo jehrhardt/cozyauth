@@ -1,1 +1,2 @@
-CREATE SCHEMA supapasskeys_test;
+create schema test;
+create schema supapasskeys_test;
