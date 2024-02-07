@@ -101,8 +101,9 @@ Now add a `.env` file to your project root with the following content:
 DATABASE_URL=<your_supabase_database_url>
 DATABASE_AFTER_CONNECT_QUERY=SET search_path TO _supapasskeys;
 SECRET_KEY_BASE=<your_supa_secret_key>
-SUPAPASSKEYS_RELYING_PARTY_NAME=<your_relying_party_name>
-SUPAPASSKEYS_RELYING_PARTY_ORIGIN=<your_relying_party_origin>
+SUPABASE_PROJECT_ID=<your_supabase_project_id>
+RELYING_PARTY_NAME=<your_relying_party_name>
+RELYING_PARTY_ORIGIN=<your_relying_party_origin>
 ```
 
 Make sure to replace `<your_supabase_database_url>` with the URL of your
