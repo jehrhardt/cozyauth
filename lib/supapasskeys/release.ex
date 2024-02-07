@@ -13,6 +13,21 @@ defmodule Supapasskeys.Release do
     end
   end
 
+  def seeds(repo) do
+    load_app()
+
+    {:ok, {:ok, _}, _} =
+      Ecto.Migrator.with_repo(repo, fn _repo ->
+        seeds_file = "#{:code.priv_dir(@app)}/repo/seeds.exs"
+
+        if File.regular?(seeds_file) do
+          {:ok, Code.eval_file(seeds_file)}
+        else
+          {:error, "Seeds file not found."}
+        end
+      end)
+  end
+
   def rollback(repo, version) do
     load_app()
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
