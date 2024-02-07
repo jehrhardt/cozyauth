@@ -50,8 +50,10 @@ Now add the following migration to the generated file:
 
 ```sql
 create schema supapasskeys;
+create schema _supapasskeys;
 create role "supapasskeys" with login password 'supapasskeys';
 grant create, usage on schema supapasskeys to supapasskeys;
+grant create, usage on schema _supapasskeys to supapasskeys;
 ```
 
 Now reset your database to apply the migration:
@@ -97,6 +99,7 @@ Now add a `.env` file to your project root with the following content:
 
 ```bash
 DATABASE_URL=<your_supabase_database_url>
+DATABASE_AFTER_CONNECT_QUERY=SET search_path TO _supapasskeys;
 SECRET_KEY_BASE=<your_supa_secret_key>
 SUPAPASSKEYS_RELYING_PARTY_NAME=<your_relying_party_name>
 SUPAPASSKEYS_RELYING_PARTY_ORIGIN=<your_relying_party_origin>
