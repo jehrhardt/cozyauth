@@ -9,7 +9,7 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-supabase_project_id = System.get_env("SUPABASE_PROJECT_ID", "supapasskeys")
+supabase_project_id = Application.get_env(:supapasskeys, :supabase_project_id)
 
 {:ok, project} =
   Supapasskeys.Repo.insert(%Supapasskeys.Supabase.Project{
