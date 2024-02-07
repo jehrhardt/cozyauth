@@ -21,19 +21,43 @@ supabase start
 
 ### Installation
 
+#### Adjust Supabase config
+
+Activate DB pooler in your `supabase/config.toml`:
+
+```toml
+[db.pooler]
+enabled = true
+```
+
+The config can be enabled by restarting your Supabase instance:
+
+```bash
+supabase stop
+supabase start
+```
+
 #### Create Supapasskeys schema and user
 
 First, create a schema and DB user for Supapasskeys in your Supabase database.
 This can be done using migrations with the Supabase CLI:
 
 ```bash
-supabase migration new create_supapasskeys_schema
+supabase migration new create_supapasskeys_schema_and_user
 ```
 
 Now add the following migration to the generated file:
 
 ```sql
-CREATE SCHEMA supapasskeys;
+create schema supapasskeys;
+create role "supapasskeys" with login password 'supapasskeys';
+grant create, usage on schema supapasskeys to supapasskeys;
+```
+
+Now reset your database to apply the migration:
+
+```bash
+supabase db reset
 ```
 
 #### Setup Supapasskeys API
@@ -43,11 +67,12 @@ Launch a Supapasskeys instance using
 service to your `compose.yml` or (`docker-compose.yml`):
 
 ```yaml
+version: '3.8'
 services:
   supapasskeys:
     image: ghcr.io/jehrhardt/supapasskeys:main
     ports:
-      - 127.0.0.1:3000:3000
+      - 127.0.0.1:4000:4000
     env_file:
       - .env
     networks:
