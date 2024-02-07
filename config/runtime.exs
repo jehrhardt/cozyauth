@@ -122,12 +122,9 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
-  api_domain =
-    System.get_env("SUPAPASSKEYS_API_DOMAIN") ||
-      raise """
-      environment variable SUPAPASSKEYS_API_DOMAIN is missing.
-      For example: api.myapp.com
-      """
-
+  api_domain = System.get_env("API_DOMAIN")
   config :supapasskeys, SupapasskeysWeb.Plugs.ApiAuth, api_domain: api_domain
+
+  supabase_project_id = System.get_env("SUPABASE_PROJECT_ID", "supapasskeys")
+  config :supapasskeys, :supabase_project_id, supabase_project_id
 end
