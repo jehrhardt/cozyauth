@@ -6,7 +6,8 @@ defmodule Supapasskeys.Repo do
     adapter: Ecto.Adapters.Postgres
 
   def with_dynamic_repo(nil, fun) do
-    fun.()
+    url = Application.get_env(:supapasskeys, Supapasskeys.Repo)[:database_url]
+    with_dynamic_repo(%Server{database_url: url}, fun)
   end
 
   def with_dynamic_repo(%Server{database_url: url}, fun) do

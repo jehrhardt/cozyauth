@@ -32,3 +32,6 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :supapasskeys, :multi_server_enabled, true
 config :supapasskeys, SupapasskeysWeb.Plugs.Subdomain, api_domain: "example.com"
+
+config :supapasskeys, Supapasskeys.Repo,
+  database_url: "postgres://supapasskeys:supapasskeys@localhost:54329/postgres"

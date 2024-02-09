@@ -138,4 +138,8 @@ if config_env() == :prod do
       """
 
   config :supapasskeys, SupapasskeysWeb.Plugs.Subdomain, api_domain: api_domain
+
+  unless multi_server_enabled do
+    config :supapasskeys, Supapasskeys.Repo, database_url: database_url
+  end
 end

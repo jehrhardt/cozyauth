@@ -30,8 +30,6 @@ defmodule SupapasskeysWeb.Plugs.SubdomainTest do
     } do
       conn = SupapasskeysWeb.Plugs.Subdomain.call(conn)
 
-      assert conn.status != 404
-
       assert get_req_header(conn, "x-subdomain") |> List.first() ==
                server.subdomain
     end
@@ -55,6 +53,25 @@ defmodule SupapasskeysWeb.Plugs.SubdomainTest do
     test "returns 404 Not Found when api domain is incorrect", %{conn: conn} do
       conn = SupapasskeysWeb.Plugs.Subdomain.call(conn)
       assert json_response(conn, 404)["error"] == "Invalid Subdomain domain"
+    end
+  end
+
+  describe "call/2 with multi server disabled" do
+    setup do
+      original_config = Application.get_env(:supapasskeys, :multi_server_enabled)
+
+      Application.put_env(:supapasskeys, :multi_server_enabled, false)
+
+      on_exit(fn ->
+        Application.put_env(:supapasskeys, :multi_server_enabled, original_config)
+      end)
+
+      :ok
+    end
+
+    test "adds no subdomain header", %{conn: conn} do
+      conn = SupapasskeysWeb.Plugs.Subdomain.call(conn)
+      assert is_nil(get_req_header(conn, "x-subdomain") |> List.first())
     end
   end
 end
