@@ -19,13 +19,6 @@ defmodule SupapasskeysWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-
-    live "/projects", ProjectLive.Index, :index
-    live "/projects/new", ProjectLive.Index, :new
-    live "/projects/:id/edit", ProjectLive.Index, :edit
-
-    live "/projects/:id", ProjectLive.Show, :show
-    live "/projects/:id/show/edit", ProjectLive.Show, :edit
   end
 
   scope "/passkeys", SupapasskeysWeb do
