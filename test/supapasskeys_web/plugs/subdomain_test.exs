@@ -1,4 +1,4 @@
-defmodule SupapasskeysWeb.Plugs.ApiAuthTest do
+defmodule SupapasskeysWeb.Plugs.SubdomainTest do
   alias Supapasskeys.Servers
   use SupapasskeysWeb.ConnCase
 
@@ -20,38 +20,40 @@ defmodule SupapasskeysWeb.Plugs.ApiAuthTest do
   describe "call/2" do
     test "returns 404 Not Found when subdomain is not found", %{conn: conn} do
       invalid_conn = Map.put(conn, :host, "#{Faker.Internet.domain_word()}.example.com")
-      conn = SupapasskeysWeb.Plugs.ApiAuth.call(invalid_conn)
+      conn = SupapasskeysWeb.Plugs.Subdomain.call(invalid_conn)
       assert json_response(conn, 404)["error"] == "Invalid API domain"
     end
 
-    test "adds server ID and relying party when a valid subdomain is provided", %{
+    test "adds subdomain header when a valid subdomain is provided", %{
       conn: conn,
       server: server
     } do
-      conn = SupapasskeysWeb.Plugs.ApiAuth.call(conn)
+      conn = SupapasskeysWeb.Plugs.Subdomain.call(conn)
 
       assert conn.status != 404
 
-      assert get_req_header(conn, "x-supabase-reference-id") |> List.first() ==
+      assert get_req_header(conn, "x-subdomain") |> List.first() ==
                server.subdomain
     end
   end
 
   describe "call/2 with invalid api_domain" do
     setup do
-      original_config = Application.get_env(:supapasskeys, SupapasskeysWeb.Plugs.ApiAuth)
+      original_config = Application.get_env(:supapasskeys, SupapasskeysWeb.Plugs.Subdomain)
 
-      Application.put_env(:supapasskeys, SupapasskeysWeb.Plugs.ApiAuth, api_domain: "invalid.com")
+      Application.put_env(:supapasskeys, SupapasskeysWeb.Plugs.Subdomain,
+        api_domain: "invalid.com"
+      )
 
       on_exit(fn ->
-        Application.put_env(:supapasskeys, SupapasskeysWeb.Plugs.ApiAuth, original_config)
+        Application.put_env(:supapasskeys, SupapasskeysWeb.Plugs.Subdomain, original_config)
       end)
 
       :ok
     end
 
     test "returns 404 Not Found when api domain is incorrect", %{conn: conn} do
-      conn = SupapasskeysWeb.Plugs.ApiAuth.call(conn)
+      conn = SupapasskeysWeb.Plugs.Subdomain.call(conn)
       assert json_response(conn, 404)["error"] == "Invalid Subdomain domain"
     end
   end

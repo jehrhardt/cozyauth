@@ -9,7 +9,7 @@ defmodule SupapasskeysWeb.RegistrationController do
 
   def create(conn, %{"relying_party_id" => relying_party_id} = params) do
     user_params = Map.take(params, ["id", "name", "display_name"])
-    subdomain = get_req_header(conn, "x-supabase-reference-id") |> List.first()
+    subdomain = get_req_header(conn, "x-subdomain") |> List.first()
     server = Servers.get_server_by_subdomain(subdomain)
     relying_party = Passkeys.get_relying_party!(server, relying_party_id)
 
@@ -24,7 +24,7 @@ defmodule SupapasskeysWeb.RegistrationController do
   def update(conn, %{"relying_party_id" => relying_party_id, "registration_id" => registration_id}) do
     # Read the body of the request as string
     {:ok, public_key_credential_json, conn} = Plug.Conn.read_body(conn)
-    subdomain = get_req_header(conn, "x-supabase-reference-id") |> List.first()
+    subdomain = get_req_header(conn, "x-subdomain") |> List.first()
     server = Servers.get_server_by_subdomain(subdomain)
     relying_party = Passkeys.get_relying_party!(server, relying_party_id)
     registration = Passkeys.get_registration!(server, registration_id)

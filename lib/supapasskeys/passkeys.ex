@@ -4,7 +4,6 @@ defmodule Supapasskeys.Passkeys do
   """
 
   import Ecto.Query, warn: false
-  alias Supapasskeys.Servers.Server
   alias Supapasskeys.WebAuthn
   alias Supapasskeys.Repo
   alias Supapasskeys.Passkeys.Registration
@@ -25,7 +24,7 @@ defmodule Supapasskeys.Passkeys do
       ** (Ecto.NoResultsError)
 
   """
-  def get_registration!(%Server{} = server, id) do
+  def get_registration!(server, id) do
     Repo.with_dynamic_repo(server, fn ->
       Repo.get!(Registration, id)
     end)
@@ -44,7 +43,7 @@ defmodule Supapasskeys.Passkeys do
 
   """
   def create_registration(
-        %Server{} = server,
+        server,
         %RelyingParty{name: name, origin: origin} = relying_party,
         attrs \\ %{}
       ) do
@@ -85,7 +84,7 @@ defmodule Supapasskeys.Passkeys do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_registration(%Server{} = server, %Registration{} = registration, attrs) do
+  def update_registration(server, %Registration{} = registration, attrs) do
     Repo.with_dynamic_repo(server, fn ->
       registration
       |> Registration.changeset(attrs)
@@ -106,7 +105,7 @@ defmodule Supapasskeys.Passkeys do
 
   """
   def confirm_registration(
-        %Server{} = server,
+        server,
         %RelyingParty{name: name, origin: origin},
         %Registration{} = registration,
         public_key_credentials_json
@@ -135,7 +134,7 @@ defmodule Supapasskeys.Passkeys do
       ** (Ecto.NoResultsError)
 
   """
-  def get_relying_party!(%Server{} = server, id),
+  def get_relying_party!(server, id),
     do:
       Repo.with_dynamic_repo(server, fn ->
         Repo.get!(RelyingParty, id)
@@ -153,7 +152,7 @@ defmodule Supapasskeys.Passkeys do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_relying_party(%Server{} = server, attrs \\ %{}) do
+  def create_relying_party(server, attrs \\ %{}) do
     Repo.with_dynamic_repo(server, fn ->
       %RelyingParty{}
       |> RelyingParty.changeset(attrs)
@@ -173,7 +172,7 @@ defmodule Supapasskeys.Passkeys do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_relying_party(%Server{} = server, %RelyingParty{} = relying_party, attrs) do
+  def update_relying_party(server, %RelyingParty{} = relying_party, attrs) do
     Repo.with_dynamic_repo(server, fn ->
       relying_party
       |> RelyingParty.changeset(attrs)
@@ -193,7 +192,7 @@ defmodule Supapasskeys.Passkeys do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_relying_party(%Server{} = server, %RelyingParty{} = relying_party) do
+  def delete_relying_party(server, %RelyingParty{} = relying_party) do
     Repo.with_dynamic_repo(server, fn ->
       Repo.delete(relying_party)
     end)

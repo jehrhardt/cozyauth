@@ -1,4 +1,4 @@
-defmodule Supapasskeys.SupabaseRepo.Migrations.CreateRelyingParty do
+defmodule Supapasskeys.Repo.Migrations.CreateRelyingParty do
   use Ecto.Migration
 
   def change do

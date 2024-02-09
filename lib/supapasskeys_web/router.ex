@@ -12,7 +12,7 @@ defmodule SupapasskeysWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug SupapasskeysWeb.Plugs.ApiAuth
+    plug SupapasskeysWeb.Plugs.Subdomain
   end
 
   scope "/", SupapasskeysWeb do

@@ -38,6 +38,8 @@ defmodule Supapasskeys.Servers do
   """
   def get_server!(id), do: Repo.get!(Server, id)
 
+  def get_server_by_subdomain(nil), do: nil
+
   @doc """
   Gets a single server by subdomain.
 
