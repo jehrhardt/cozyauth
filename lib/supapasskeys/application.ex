@@ -9,7 +9,7 @@ defmodule Supapasskeys.Application do
   def start(_type, _args) do
     children = [
       SupapasskeysWeb.Telemetry,
-      Supapasskeys.Repo,
+      Supapasskeys.ServerRepo,
       {DNSCluster, query: Application.get_env(:supapasskeys, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Supapasskeys.PubSub},
       # Start the Finch HTTP client for sending emails
@@ -18,7 +18,7 @@ defmodule Supapasskeys.Application do
       # {Supapasskeys.Worker, arg},
       # Start to serve requests, typically the last entry
       SupapasskeysWeb.Endpoint,
-      {Cachex, name: :supabase_projects}
+      {Cachex, name: :servers}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

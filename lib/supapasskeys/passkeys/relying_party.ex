@@ -8,7 +8,6 @@ defmodule Supapasskeys.Passkeys.RelyingParty do
   schema "relying_parties" do
     field :name, :string
     field :origin, :string
-    field :project_id, Ecto.UUID
 
     has_many :registrations, Supapasskeys.Passkeys.Registration, foreign_key: :relying_party_id
     has_many :passkeys, Supapasskeys.Passkeys.Passkey, foreign_key: :relying_party_id
@@ -19,7 +18,7 @@ defmodule Supapasskeys.Passkeys.RelyingParty do
   @doc false
   def changeset(relying_party, attrs) do
     relying_party
-    |> cast(attrs, [:name, :origin, :project_id])
-    |> validate_required([:name, :origin, :project_id])
+    |> cast(attrs, [:name, :origin])
+    |> validate_required([:name, :origin])
   end
 end

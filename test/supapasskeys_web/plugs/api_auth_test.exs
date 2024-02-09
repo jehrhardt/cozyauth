@@ -1,20 +1,20 @@
 defmodule SupapasskeysWeb.Plugs.ApiAuthTest do
-  alias Supapasskeys.Supabase
+  alias Supapasskeys.Servers
   use SupapasskeysWeb.ConnCase
 
   setup %{conn: conn} do
-    import Supapasskeys.SupabaseFixtures
-    project = project_fixture()
+    import Supapasskeys.ServersFixtures
+    server = server_fixture()
 
     on_exit(fn ->
-      Supabase.delete_project(project)
+      Servers.delete_server(server)
     end)
 
     {:ok,
      conn:
        put_req_header(conn, "accept", "application/json")
-       |> Map.put(:host, "#{project.reference_id}.example.com"),
-     project: project}
+       |> Map.put(:host, "#{server.subdomain}.example.com"),
+     server: server}
   end
 
   describe "call/2" do
@@ -24,16 +24,16 @@ defmodule SupapasskeysWeb.Plugs.ApiAuthTest do
       assert json_response(conn, 404)["error"] == "Invalid API domain"
     end
 
-    test "adds project ID and relying party when a valid subdomain is provided", %{
+    test "adds server ID and relying party when a valid subdomain is provided", %{
       conn: conn,
-      project: project
+      server: server
     } do
       conn = SupapasskeysWeb.Plugs.ApiAuth.call(conn)
 
       assert conn.status != 404
 
       assert get_req_header(conn, "x-supabase-reference-id") |> List.first() ==
-               project.reference_id
+               server.subdomain
     end
   end
 

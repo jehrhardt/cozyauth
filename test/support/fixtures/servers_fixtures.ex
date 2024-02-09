@@ -11,11 +11,12 @@ defmodule Supapasskeys.ServersFixtures do
     {:ok, server} =
       attrs
       |> Enum.into(%{
-        database_url: "some database_url",
-        migrated_at: ~U[2024-02-08 05:22:00Z],
-        subdomain: "some subdomain"
+        database_url: "postgres://supapasskeys:supapasskeys@localhost:54329/postgres",
+        subdomain: Faker.Internet.domain_word()
       })
       |> Supapasskeys.Servers.create_server()
+
+    {:ok, server} = Supapasskeys.Servers.migrate_database(server)
 
     server
   end

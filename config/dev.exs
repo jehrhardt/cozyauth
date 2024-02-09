@@ -1,7 +1,7 @@
 import Config
 
 # Configure your database
-config :supapasskeys, Supapasskeys.Repo,
+config :supapasskeys, Supapasskeys.ServerRepo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",

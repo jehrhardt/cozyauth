@@ -8,7 +8,7 @@
 import Config
 
 config :supapasskeys,
-  ecto_repos: [Supapasskeys.Repo],
+  ecto_repos: [Supapasskeys.ServerRepo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 # Configures the endpoint

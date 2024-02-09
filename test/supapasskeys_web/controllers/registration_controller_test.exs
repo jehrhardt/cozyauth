@@ -9,15 +9,15 @@ defmodule SupapasskeysWeb.RegistrationControllerTest do
   @invalid_attrs %{id: nil, name: nil, display_name: nil}
 
   setup %{conn: conn} do
-    import Supapasskeys.SupabaseFixtures
+    import Supapasskeys.ServersFixtures
     import Supapasskeys.PasskeysFixtures
-    project = project_fixture()
-    relying_party = relying_party_fixture(project)
+    server = server_fixture()
+    relying_party = relying_party_fixture(server)
 
     {:ok,
      conn:
        put_req_header(conn, "accept", "application/json")
-       |> Map.put(:host, "#{project.reference_id}.example.com"),
+       |> Map.put(:host, "#{server.subdomain}.example.com"),
      relying_party: relying_party}
   end
 

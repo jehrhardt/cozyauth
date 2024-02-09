@@ -21,7 +21,11 @@ defmodule Supapasskeys.ServersTest do
     end
 
     test "create_server/1 with valid data creates a server" do
-      valid_attrs = %{subdomain: "some subdomain", database_url: "some database_url", migrated_at: ~U[2024-02-08 05:22:00Z]}
+      valid_attrs = %{
+        subdomain: "some subdomain",
+        database_url: "some database_url",
+        migrated_at: ~U[2024-02-08 05:22:00Z]
+      }
 
       assert {:ok, %Server{} = server} = Servers.create_server(valid_attrs)
       assert server.subdomain == "some subdomain"
@@ -35,7 +39,12 @@ defmodule Supapasskeys.ServersTest do
 
     test "update_server/2 with valid data updates the server" do
       server = server_fixture()
-      update_attrs = %{subdomain: "some updated subdomain", database_url: "some updated database_url", migrated_at: ~U[2024-02-09 05:22:00Z]}
+
+      update_attrs = %{
+        subdomain: "some updated subdomain",
+        database_url: "some updated database_url",
+        migrated_at: ~U[2024-02-09 05:22:00Z]
+      }
 
       assert {:ok, %Server{} = server} = Servers.update_server(server, update_attrs)
       assert server.subdomain == "some updated subdomain"

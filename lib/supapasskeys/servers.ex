@@ -38,6 +38,26 @@ defmodule Supapasskeys.Servers do
   def get_server!(id), do: Repo.get!(Server, id)
 
   @doc """
+  Gets a single server by subdomain.
+
+  ## Examples
+
+      iex> get_server_by_subdomain("subdomain")
+      %Server{}
+
+      iex> get_server_by_subdomain("subdomain")
+      nil
+
+  """
+  def get_server_by_subdomain(subdomain) when is_binary(subdomain) do
+    case Cachex.fetch(:servers, subdomain, fn ->
+           {:commit, Repo.get_by(Server, subdomain: subdomain)}
+         end) do
+      {_, server} -> server
+    end
+  end
+
+  @doc """
   Creates a server.
 
   ## Examples
@@ -100,5 +120,23 @@ defmodule Supapasskeys.Servers do
   """
   def change_server(%Server{} = server, attrs \\ %{}) do
     Server.changeset(server, attrs)
+  end
+
+  @doc """
+  Migrates the database for a server.
+
+  ## Examples
+
+      iex> migrate_database(server)
+      %Server{}
+
+  """
+  def migrate_database(%Server{} = server) do
+    Supapasskeys.Repo.with_dynamic_repo(server, fn ->
+      Ecto.Migrator.run(Supapasskeys.Repo, :up, all: true)
+    end)
+
+    change_server(server, %{migrated_at: DateTime.utc_now()})
+    |> Repo.update()
   end
 end

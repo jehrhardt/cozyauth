@@ -1,5 +1,5 @@
 defmodule SupapasskeysWeb.Plugs.ApiAuth do
-  alias Supapasskeys.Supabase
+  alias Supapasskeys.Servers
   @behaviour Plug
   import Plug.Conn
 
@@ -22,12 +22,12 @@ defmodule SupapasskeysWeb.Plugs.ApiAuth do
 
       _ ->
         if String.ends_with?(conn.host, api_domain) do
-          project =
+          server =
             conn.host
             |> String.replace(".#{api_domain}", "")
-            |> Supabase.get_project_by_reference_id()
+            |> Servers.get_server_by_subdomain()
 
-          case project do
+          case server do
             nil ->
               conn
               |> put_status(404)
@@ -37,7 +37,7 @@ defmodule SupapasskeysWeb.Plugs.ApiAuth do
 
             _ ->
               conn
-              |> put_req_header("x-supabase-reference-id", project.reference_id)
+              |> put_req_header("x-supabase-reference-id", server.subdomain)
           end
         else
           conn

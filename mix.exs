@@ -76,7 +76,7 @@ defmodule Supapasskeys.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["cmd supabase db reset", "ecto.setup"],
-      test: ["ecto.migrate --quiet", "test"],
+      test: ["ecto.migrate --quiet --repo Supapasskeys.ServerRepo", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind supapasskeys", "esbuild supapasskeys"],
       "assets.deploy": [
