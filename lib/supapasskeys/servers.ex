@@ -4,6 +4,7 @@ defmodule Supapasskeys.Servers do
   """
 
   import Ecto.Query, warn: false
+  alias Supapasskeys.Petname
   alias Supapasskeys.ServerRepo, as: Repo
 
   alias Supapasskeys.Servers.Server
@@ -70,6 +71,8 @@ defmodule Supapasskeys.Servers do
 
   """
   def create_server(attrs \\ %{}) do
+    attrs = Map.put(attrs, :subdomain, Petname.generate_subdomain())
+
     %Server{}
     |> Server.changeset(attrs)
     |> Repo.insert()

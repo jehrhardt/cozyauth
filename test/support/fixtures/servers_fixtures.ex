@@ -11,8 +11,7 @@ defmodule Supapasskeys.ServersFixtures do
     {:ok, server} =
       attrs
       |> Enum.into(%{
-        database_url: "postgres://supapasskeys:supapasskeys@localhost:54329/postgres",
-        subdomain: Faker.Internet.domain_word()
+        database_url: "postgres://supapasskeys:supapasskeys@localhost:54329/postgres"
       })
       |> Supapasskeys.Servers.create_server()
 
