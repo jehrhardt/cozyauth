@@ -122,9 +122,24 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
-  api_domain = System.get_env("API_DOMAIN")
-  config :supapasskeys, SupapasskeysWeb.Plugs.ApiAuth, api_domain: api_domain
+  multi_server_enabled =
+    case System.get_env("MULTI_SERVER") do
+      "yes" -> true
+      _ -> false
+    end
 
-  supabase_project_id = System.get_env("SUPABASE_PROJECT_ID", "supapasskeys")
-  config :supapasskeys, :supabase_project_id, supabase_project_id
+  config :supapasskeys, :multi_server_enabled, multi_server_enabled
+
+  api_domain =
+    System.get_env("API_DOMAIN") ||
+      raise """
+        environment variable API_DOMAIN is missing.
+        For example: api.example.com
+      """
+
+  config :supapasskeys, SupapasskeysWeb.Plugs.Subdomain, api_domain: api_domain
+
+  unless multi_server_enabled do
+    config :supapasskeys, Supapasskeys.Repo, database_url: database_url
+  end
 end

@@ -18,8 +18,6 @@ defmodule Supapasskeys.DataCase do
 
   using do
     quote do
-      alias Supapasskeys.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
@@ -36,7 +34,9 @@ defmodule Supapasskeys.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Supapasskeys.Repo, shared: not tags[:async])
+    pid =
+      Ecto.Adapters.SQL.Sandbox.start_owner!(Supapasskeys.ServerRepo, shared: not tags[:async])
+
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end
 

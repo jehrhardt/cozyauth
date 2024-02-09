@@ -9,12 +9,9 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-supabase_project_id = Application.get_env(:supapasskeys, :supabase_project_id)
-
-{:ok, project} =
-  Supapasskeys.Repo.insert(%Supapasskeys.Supabase.Project{
-    name: supabase_project_id,
-    reference_id: supabase_project_id,
+{:ok, server} =
+  Supapasskeys.ServerRepo.insert(%Supapasskeys.Servers.Server{
+    subdomain: "supapasskeys",
     database_url:
       System.get_env(
         "DATABASE_URL",
@@ -22,12 +19,11 @@ supabase_project_id = Application.get_env(:supapasskeys, :supabase_project_id)
       )
   })
 
-Supapasskeys.Supabase.migrate_database(project)
+Supapasskeys.Servers.migrate_database(server)
 
-Supapasskeys.SupabaseRepo.with_dynamic_repo(project, fn ->
-  Supapasskeys.SupabaseRepo.insert(%Supapasskeys.Passkeys.RelyingParty{
-    project_id: project.id,
-    name: System.get_env("RELYING_PARTY_NAME", supabase_project_id),
+Supapasskeys.Repo.with_dynamic_repo(server, fn ->
+  Supapasskeys.Repo.insert(%Supapasskeys.Passkeys.RelyingParty{
+    name: System.get_env("RELYING_PARTY_NAME", "Supapasskeys"),
     origin: System.get_env("RELYING_PARTY_ORIGIN", "http://localhost:4000")
   })
 end)

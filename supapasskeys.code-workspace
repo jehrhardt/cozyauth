@@ -7,11 +7,16 @@
     {
       "name": "supapasskeys_webauthn",
       "path": "native/supapasskeys_webauthn"
+    },
+    {
+      "name": "supapasskeys_petname",
+      "path": "native/supapasskeys_petname"
     }
   ],
   "settings": {
     "files.exclude": {
-      "native/supapasskeys_webauthn/": true
+      "native/supapasskeys_webauthn/": true,
+      "native/supapasskeys_petname/": true
     }
   }
 }
