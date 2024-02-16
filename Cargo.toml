@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "supapasskeys-cli",
+  "native/supapasskeys_webauthn",
+  "native/supapasskeys_petname",
+]

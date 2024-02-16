@@ -38,3 +38,5 @@ priv/native/
 npm-debug.log
 /assets/node_modules/
 
+# Ignore Rust build artifacts.
+target/
