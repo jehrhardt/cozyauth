@@ -1,4 +1,4 @@
-FROM hexpm/elixir:1.16.1-erlang-26.2.1-ubuntu-jammy-20231004 as builder
+FROM hexpm/elixir:1.16.1-erlang-26.2.2-ubuntu-jammy-20240125 as builder
 
 # install build dependencies
 RUN apt-get update -y \
