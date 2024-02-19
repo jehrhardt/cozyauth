@@ -59,7 +59,7 @@ defmodule Supapasskeys.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:cachex, "~> 3.6"},
-      {:rustler, "~> 0.30.0"},
+      {:rustler, "~> 0.31.0"},
       {:faker, "~> 0.17", only: :test},
       {:uuid, "~> 1.1", only: :test}
     ]
