@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
 
-use crate::commands;
+use crate::{commands, config::Config};
 
 #[derive(Debug, Parser)]
 #[command(about = "Supapasskeys extension for Supabase", long_about = None)]
@@ -20,8 +20,15 @@ enum Commands {
 
 pub fn start() {
     let cli = Cli::parse();
+    let config = match Config::load(None) {
+        Some(config) => config,
+        None => {
+            eprintln!("Could not find or parse configuration file");
+            std::process::exit(1);
+        }
+    };
     match cli.command {
-        Commands::Init => commands::init::run(),
+        Commands::Init => commands::init::run(config),
         Commands::Start => commands::start::run(),
     }
 }
