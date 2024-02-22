@@ -9,3 +9,4 @@ edition = "2021"
 clap = { version = "4.5.1", features = ["derive"] }
 serde = { version = "1.0.197", features = ["derive"] }
 toml = "0.8.10"
+uuid = { version = "1.7.0", features = ["v4"] }

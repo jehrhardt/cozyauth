@@ -1,0 +1,2 @@
+# Ignore test config files in this directory
+*config-*.toml

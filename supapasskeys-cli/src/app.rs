@@ -1,6 +1,8 @@
 use clap::{Parser, Subcommand};
 
-use crate::{commands, config::Config};
+use crate::commands;
+
+const DEFAULT_CONFIG_DIR: &str = "./.supapasskeys";
 
 #[derive(Debug, Parser)]
 #[command(about = "Supapasskeys extension for Supabase", long_about = None)]
@@ -20,15 +22,11 @@ enum Commands {
 
 pub fn start() {
     let cli = Cli::parse();
-    let config = match Config::load(None) {
-        Some(config) => config,
-        None => {
-            eprintln!("Could not find or parse configuration file");
-            std::process::exit(1);
-        }
-    };
     match cli.command {
-        Commands::Init => commands::init::run(config),
+        Commands::Init => {
+            let config_file = format!("{}/config.toml", DEFAULT_CONFIG_DIR);
+            commands::init::run(config_file.as_str());
+        }
         Commands::Start => commands::start::run(),
     }
 }
