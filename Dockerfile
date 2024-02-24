@@ -1,4 +1,4 @@
-FROM rust:1.76-bookworm as builder
+FROM rust:1.76-bookworm AS builder
 
 WORKDIR /supapasskeys
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN cargo build --release
 
-FROM debian:bookworm-20240211-slim
+FROM debian:bookworm-20240211-slim AS release-base
 
 CMD ["supapasskeys"]
 
@@ -18,6 +18,14 @@ RUN chown nobody /supapasskeys \
   && apt-get clean \
   && rm -f /var/lib/apt/lists/*_*
 
-COPY --from=builder /supapasskeys/target/release/supapasskeys /usr/local/bin/supapasskeys
+FROM release-base AS server
+
+COPY --from=builder /supapasskeys/target/release/supapasskeys-server /usr/local/bin/supapasskeys
+
+USER nobody
+
+FROM release-base
+
+COPY --from=builder /supapasskeys/target/release/supapasskeys-server-supabase /usr/local/bin/supapasskeys
 
 USER nobody
