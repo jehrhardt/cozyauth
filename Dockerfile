@@ -18,14 +18,9 @@ RUN chown nobody /supapasskeys \
   && apt-get clean \
   && rm -f /var/lib/apt/lists/*_*
 
-FROM release-base AS server
-
-COPY --from=builder /supapasskeys/target/release/supapasskeys-server /usr/local/bin/supapasskeys
-
-USER nobody
-
 FROM release-base
+ARG BINARY_NAME=supapasskeys-server-supabase
 
-COPY --from=builder /supapasskeys/target/release/supapasskeys-server-supabase /usr/local/bin/supapasskeys
+COPY --from=builder /supapasskeys/target/release/${BINARY_NAME} /usr/local/bin/supapasskeys
 
 USER nobody
