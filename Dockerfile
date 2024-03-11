@@ -48,7 +48,7 @@ COPY config/runtime.exs config/
 COPY rel rel
 RUN mix release
 
-FROM ubuntu:jammy-20240212
+FROM ubuntu:jammy-20240227
 
 RUN apt-get update -y \
   && apt-get install -y \
