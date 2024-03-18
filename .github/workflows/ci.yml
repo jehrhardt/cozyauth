@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
@@ -12,43 +12,76 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Gleam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "26.2.3"
+          gleam-version: "1.0.0"
+          rebar3-version: "3"
+      - name: Set up deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Download dependencies - core
+        run: gleam deps download
+        working-directory: cozyauth_core
+      - name: Download dependencies - api
+        run: gleam deps download
+        working-directory: cozyauth_api
+      - name: Download dependencies - dev_server
+        run: gleam deps download
+        working-directory: cozyauth_dev_server
+      - name: Run tests - core
+        run: gleam test
+        working-directory: cozyauth_core
+      - name: Run tests - api
+        run: gleam test
+        working-directory: cozyauth_api
+      - name: Run tests - dev_server
+        run: gleam test
+        working-directory: cozyauth_dev_server
+      - name: Run tests - native
+        run: cargo test --verbose
 
+  fmt:
+    name: Check Formatting
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Supabase
-      uses: supabase/setup-cli@v1
-      with:
-        version: latest
-    - name: Set up Elixir
-      uses: erlef/setup-beam@v1
-      with:
-        elixir-version: '1.16.1'
-        otp-version: '26.2.1'
-    - name: Restore dependencies cache
-      uses: actions/cache@v4
-      with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
-    - name: Start Supabase
-      run: supabase start
-    - name: Install dependencies
-      run: mix deps.get
-    - name: Check Elixir Formatting
-      run: mix format --check-formatted
-    - name: Check Rust Formatting
-      run: cargo fmt -- --check
-      working-directory: ./native/supapasskeys_webauthn
-    - name: Compiles without warnings
-      run: mix compile --warnings-as-errors
-    - name: Run Elixir tests
-      run: mix test
+      - uses: actions/checkout@v4
+      - name: Set up Gleam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "26.2.3"
+          gleam-version: "1.0.0"
+      - name: Check formatting - core
+        run: gleam format --check src test
+        working-directory: cozyauth_core
+      - name: Check formatting - api
+        run: gleam format --check src test
+        working-directory: cozyauth_api
+      - name: Check formatting - dev_server
+        run: gleam format --check src test
+        working-directory: cozyauth_dev_server
+      - name: Check formatting - native
+        run: cargo fmt -- --check
 
-  build-image:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
 
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clippy
+        run: cargo clippy -- -D warnings
+
+  build-image-api:
+    name: Build container image for api
     runs-on: ubuntu-latest
 
     steps:
@@ -59,11 +92,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-api
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./cozyauth_api
           file: ./Dockerfile
           push: false
           tags: ${{ steps.meta.outputs.tags }}
