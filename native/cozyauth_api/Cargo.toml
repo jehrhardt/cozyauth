@@ -1,0 +1,17 @@
+[package]
+name = "cozyauth_api"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "couzauth_api"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.31.0"
+serde_json = "1.0.114"
+uuid = { version = "1.7.0", features = ["v4"] }
+webauthn-rs = { version = "0.4.8", features = [
+  "danger-allow-state-serialisation",
+] }

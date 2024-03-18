@@ -63,6 +63,6 @@ fn init_webauthn(relying_party: RelyingParty) -> Webauthn {
 }
 
 rustler::init!(
-    "Elixir.Supapasskeys.WebAuthn",
+    "Elixir.CozyAuth.Api",
     [start_passkey_registration, finish_passkey_registration]
 );
