@@ -1,8 +1,0 @@
-#!/bin/sh
-cd -P -- "$(dirname -- "$0")"
-
-if [ -z "$NO_MIGRATE" ]; then
-  ./supapasskeys eval Supapasskeys.Release.migrate
-fi
-
-PHX_SERVER=true exec ./supapasskeys start
