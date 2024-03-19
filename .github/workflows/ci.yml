@@ -17,35 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Gleam
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: "26.2.3"
-          gleam-version: "1.0.0"
-          rebar3-version: "3"
-      - name: Set up deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Download dependencies - core
-        run: gleam deps download
-        working-directory: cozyauth_core
-      - name: Download dependencies - api
-        run: gleam deps download
-        working-directory: cozyauth_api
-      - name: Download dependencies - dev_server
-        run: gleam deps download
-        working-directory: cozyauth_dev_server
-      - name: Run tests - core
-        run: gleam test
-        working-directory: cozyauth_core
-      - name: Run tests - api
-        run: gleam test
-        working-directory: cozyauth_api
-      - name: Run tests - dev_server
-        run: gleam test
-        working-directory: cozyauth_dev_server
-      - name: Run tests - native
+      - name: Run tests
         run: cargo test --verbose
 
   fmt:
@@ -54,21 +26,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Gleam
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: "26.2.3"
-          gleam-version: "1.0.0"
-      - name: Check formatting - core
-        run: gleam format --check src test
-        working-directory: cozyauth_core
-      - name: Check formatting - api
-        run: gleam format --check src test
-        working-directory: cozyauth_api
-      - name: Check formatting - dev_server
-        run: gleam format --check src test
-        working-directory: cozyauth_dev_server
-      - name: Check formatting - native
+      - name: Check formatting
         run: cargo fmt -- --check
 
   linting:
@@ -96,7 +54,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v5
         with:
-          context: ./cozyauth_api
+          context: .
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
