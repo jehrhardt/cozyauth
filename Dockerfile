@@ -1,4 +1,4 @@
-FROM rust:1.77.0-alpine3.18 as builder
+FROM rust:1.77.0-alpine3.19 as builder
 
 WORKDIR /app
 
@@ -11,3 +11,5 @@ FROM alpine:3.19
 ENTRYPOINT ["/cozyauth"]
 
 COPY --from=builder /app/target/release/cozyauth /cozyauth
+
+USER nobody
