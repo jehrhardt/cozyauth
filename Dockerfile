@@ -6,7 +6,7 @@ COPY . .
 
 RUN cargo build --release
 
-FROM alpine:3.18
+FROM alpine:3.19
 
 ENTRYPOINT ["/cozyauth"]
 
