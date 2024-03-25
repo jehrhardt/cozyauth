@@ -1,4 +1,4 @@
-# Supapasskeys
+# cozyauth
 
 Easy Passkey authentication for Supabase.
 
@@ -174,3 +174,6 @@ mix phx.server
 ```
 
 You can now access the API at http://localhost:3000.
+
+## License
+This project is licensed under under the Apache License, Version 2.0 ([LICENSE](LICENSE-Apache-2.0)). Except the cozyauth-multi-tenant subproject, which is licensed under the AGPLv3 ([LICENSE](LICENSE-AGPL-3.0)).
