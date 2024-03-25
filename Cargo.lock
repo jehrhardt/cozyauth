@@ -225,6 +225,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cozyauth-cli"
+version = "0.1.0"
+
+[[package]]
+name = "cozyauth-multi-tenant"
+version = "0.1.0"
+
+[[package]]
 name = "data-encoding"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
