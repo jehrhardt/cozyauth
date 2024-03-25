@@ -55,6 +55,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            EXECUTABLE=cozyauth-server
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -77,7 +79,5 @@ jobs:
         with:
           context: .
           push: false
-          build-args: |
-            EXECUTABLE=cozyauth-multi-tenant
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

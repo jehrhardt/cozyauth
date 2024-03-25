@@ -26,5 +26,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            EXECUTABLE=cozyauth-server
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
