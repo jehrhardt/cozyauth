@@ -1,4 +1,4 @@
-FROM rust:1.77.0-alpine3.19 AS builder
+FROM rust:1.77.0-alpine3.19 as builder
 
 WORKDIR /app
 
@@ -13,22 +13,16 @@ COPY . .
 
 RUN cargo build --bin ${EXECUTABLE} --release
 
-FROM alpine:3.19 AS release
+FROM alpine:3.19
 
 ENTRYPOINT ["/cozyauth"]
+
+ARG EXECUTABLE=cozyauth-server
 
 RUN apk add --no-cache \
   openssl \
   libgcc
 
-FROM release AS server
-
-COPY --from=builder /app/target/release/cozyauth-server /cozyauth
-
-USER nobody
-
-FROM release
-
-COPY --from=builder /app/target/release/cozyauth-multi-tenant /cozyauth
+COPY --from=builder /app/target/release/${EXECUTABLE} /cozyauth
 
 USER nobody
