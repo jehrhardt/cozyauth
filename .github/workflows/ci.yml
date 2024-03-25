@@ -38,8 +38,8 @@ jobs:
       - name: Clippy
         run: cargo clippy -- -D warnings
 
-  build-image-api:
-    name: Build container image for api
+  build-image-server:
+    name: Build container image for server
     runs-on: ubuntu-latest
 
     steps:
@@ -50,11 +50,34 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-api
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build
         uses: docker/build-push-action@v5
         with:
           context: .
           push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-image-multi-tenant:
+    name: Build container image for multi tenant
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          build-args: |
+            EXECUTABLE=cozyauth-multi-tenant
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
