@@ -13,6 +13,10 @@ jobs:
     name: Publish container image for server
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
