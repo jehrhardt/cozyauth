@@ -214,7 +214,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "cozyauth"
+name = "cozyauth-cli"
+version = "0.1.0"
+
+[[package]]
+name = "cozyauth-multi-tenant"
+version = "0.1.0"
+
+[[package]]
+name = "cozyauth-server"
 version = "0.1.0"
 dependencies = [
  "axum",
@@ -223,14 +231,6 @@ dependencies = [
  "uuid",
  "webauthn-rs",
 ]
-
-[[package]]
-name = "cozyauth-cli"
-version = "0.1.0"
-
-[[package]]
-name = "cozyauth-multi-tenant"
-version = "0.1.0"
 
 [[package]]
 name = "data-encoding"
