@@ -9,6 +9,13 @@ pub fn app() -> Router {
     Router::new().merge(health::router())
 }
 
+pub fn server_port() -> u16 {
+    std::env::var("PORT")
+        .ok()
+        .and_then(|port| port.parse().ok())
+        .unwrap_or(3000)
+}
+
 pub async fn shutdown_signal() {
     let ctrl_c = async {
         signal::ctrl_c()

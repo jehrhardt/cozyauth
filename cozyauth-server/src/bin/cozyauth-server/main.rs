@@ -23,7 +23,7 @@ async fn main() {
     } else {
         Ipv4Addr::UNSPECIFIED.into()
     };
-    let socket_address = SocketAddr::new(ip_address, 3000);
+    let socket_address = SocketAddr::new(ip_address, app::server_port());
     let listener = TcpListener::bind(&socket_address).await.unwrap();
     info!("Listening on {}", socket_address);
     axum::serve(listener, app.into_make_service())
