@@ -1,3 +1,3 @@
 [workspace]
-members = ["cozyauth-cli", "cozyauth-multi-tenant", "cozyauth-server"]
+members = ["cozyauth-cli", "cozyauth-serverless", "cozyauth-server"]
 resolver = "2"
