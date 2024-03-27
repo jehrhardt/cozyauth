@@ -27,6 +27,7 @@ async fn main() {
     let listener = TcpListener::bind(&socket_address).await.unwrap();
     info!("Listening on {}", socket_address);
     axum::serve(listener, app.into_make_service())
+        .with_graceful_shutdown(app::shutdown_signal())
         .await
         .unwrap()
 }
