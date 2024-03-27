@@ -61,8 +61,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  build-image-multi-tenant:
-    name: Build container image for multi tenant
+  build-image-serverless:
+    name: Build container image for serverless runtime
     runs-on: ubuntu-latest
 
     steps:
