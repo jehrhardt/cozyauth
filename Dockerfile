@@ -3,7 +3,6 @@ FROM rust:1.77.1-alpine3.19 as builder
 WORKDIR /app
 
 ARG RUSTFLAGS="-C target-feature=-crt-static"
-ARG EXECUTABLE=cozyauth-serverless
 
 RUN apk add --no-cache \
   musl-dev \
@@ -11,18 +10,19 @@ RUN apk add --no-cache \
 
 COPY . .
 
-RUN cargo build --bin ${EXECUTABLE} --release
+RUN cargo build --release
 
 FROM alpine:3.19
 
-ENTRYPOINT ["/cozyauth"]
-
-ARG EXECUTABLE=cozyauth-serverless
+WORKDIR /app
+ENTRYPOINT ["cozyauth"]
+ENV APP_PROFILE=prod
 
 RUN apk add --no-cache \
   openssl \
   libgcc
 
-COPY --from=builder /app/target/release/${EXECUTABLE} /cozyauth
+COPY --from=builder /app/target/release/server /usr/local/bin/cozyauth
+COPY --from=builder /app/server/configuration server/configuration
 
 USER nobody
