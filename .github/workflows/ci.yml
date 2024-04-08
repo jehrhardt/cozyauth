@@ -17,31 +17,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build tests
+        run: cargo test --no-run
       - name: Run tests
-        run: cargo test --verbose
+        run: cargo test
 
   fmt:
     name: Check Formatting
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-      - name: Check formatting
-        run: cargo fmt -- --check
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
+      - name: Enforce formatting
+        run: cargo fmt --check
 
   linting:
     name: Linting
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-      - name: Clippy
-        run: cargo clippy -- -D warnings
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
+      - name: Linting
+        run: cargo clippy
 
   build-image-server:
     name: Build container image for server
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -64,7 +70,6 @@ jobs:
   build-image-serverless:
     name: Build container image for serverless runtime
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx

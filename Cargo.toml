@@ -1,3 +1,4 @@
 [workspace]
-members = ["cozyauth-cli", "cozyauth-serverless", "cozyauth-server"]
+members = ["app", "server_sdk", "server"]
+default-members = ["server"]
 resolver = "2"
