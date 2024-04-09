@@ -14,13 +14,20 @@ app = { path = "../app" }
 dotenvy = "0.15"
 figment = { version = "0.10", features = ["env", "yaml"] }
 serde = { version = "1", features = ["derive"] }
+humantime-serde = "1.1"
 
 # Telemetry
 pavex_tracing = { version = "0.1.24" }
 tracing = "0.1"
 tracing-bunyan-formatter = "0.3"
 tracing-panic = "0.1"
-tracing-subscriber = { version = "0.3", default-features = false, features = ["env-filter", "registry", "smallvec", "std", "tracing-log"] }
+tracing-subscriber = { version = "0.3", default-features = false, features = [
+  "env-filter",
+  "registry",
+  "smallvec",
+  "std",
+  "tracing-log",
+] }
 
 [dev-dependencies]
 reqwest = "0.12"

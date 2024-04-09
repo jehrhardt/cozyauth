@@ -38,7 +38,7 @@ impl Config {
     ///
     /// We don't rely on `figment`'s built-in support for profiles because
     /// we want to make sure that values for different profiles are not co-located in
-    /// the same configuration file.  
+    /// the same configuration file.
     /// This makes it easier to avoid leaking sensitive information by mistake (e.g.
     /// by committing configuration values for the `dev` profile to the repository).
     ///
@@ -125,6 +125,13 @@ pub struct ServerConfig {
     ///
     /// Set the `APP_SERVER__IP` environment variable to override its value.
     pub ip: std::net::IpAddr,
+    /// The timeout for graceful shutdown of the server.
+    ///
+    /// E.g. `1 minute` for a 1 minute timeout.
+    ///
+    /// Set the `APP_SERVER__GRACEFUL_SHUTDOWN_TIMEOUT` environment variable to override its value.
+    #[serde(with = "humantime_serde")]
+    pub graceful_shutdown_timeout: std::time::Duration,
 }
 
 impl ServerConfig {
