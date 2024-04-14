@@ -69,7 +69,7 @@ Launch a Supapasskeys instance using
 service to your `compose.yml` or (`docker-compose.yml`):
 
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   supapasskeys:
     image: ghcr.io/jehrhardt/supapasskeys:main
@@ -161,6 +161,7 @@ npm run dev
 You can now open the application in your browser at http://localhost:8000.
 
 ### Launch API
+
 Setup development environment:
 
 ```bash
