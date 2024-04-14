@@ -9,7 +9,7 @@ name = "bp"
 
 [dependencies]
 cargo_px_env = "0.1"
-pavex = { version = "0.1.24" }
+pavex = { version = "0.1.25" }
 pavex_tracing = { version = "0.1.24" }
 pavex_cli_client = { version = "0.1.24" }
 tracing = "0.1"
