@@ -177,7 +177,7 @@ You can now access the API at http://localhost:3000.
 
 ## License
 
-This project is mostly licensed under the AGPLv3 ([LICENSE](LICENSE-AGPL-3.0))
-or the Apache License, Version 2.0 ([LICENSE](LICENSE-Apache-2.0)). Except the
-cozyauth-serverless subproject, which is licensed under the AGPLv3
-([LICENSE](LICENSE-AGPL-3.0)) only.
+This project is mostly licensed under the AGPL-3.0-or-later
+([LICENSE](LICENSE-AGPL-3.0-or-later). Except the app, server and server_sdk
+directories, which are licensed under the GPL-3.0-or-later
+([LICENSE](LICENSE-GPL-3.0-or-later)).
