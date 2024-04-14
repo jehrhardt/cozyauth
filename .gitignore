@@ -23,6 +23,8 @@ out/
 build
 dist
 /.cache
+.docusaurus
+.cache-loader
 
 # Debug
 npm-debug.log*
