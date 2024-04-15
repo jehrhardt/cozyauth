@@ -1,34 +1,41 @@
-# Welcome to Remix + Vite!
+# Website
 
-📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/future/vite) for details on supported features.
+This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
-## Development
+### Installation
 
-Run the Express server with Vite dev middleware:
-
-```shellscript
-npm run dev
+```
+$ yarn
 ```
 
-## Deployment
+### Local Development
 
-First, build your app for production:
-
-```sh
-npm run build
+```
+$ yarn start
 ```
 
-Then run the app in production mode:
+This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
-```sh
-npm start
+### Build
+
+```
+$ yarn build
 ```
 
-Now you'll need to pick a host to deploy it to.
+This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
-### DIY
+### Deployment
 
-If you're familiar with deploying Express applications you should be right at home. Just make sure to deploy the output of `npm run build`
+Using SSH:
 
-- `build/server`
-- `build/client`
+```
+$ USE_SSH=true yarn deploy
+```
+
+Not using SSH:
+
+```
+$ GIT_USER=<Your GitHub username> yarn deploy
+```
+
+If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
