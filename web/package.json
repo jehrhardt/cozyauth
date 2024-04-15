@@ -26,6 +26,7 @@
     "@docusaurus/module-type-aliases": "3.2.1",
     "@docusaurus/tsconfig": "3.2.1",
     "@docusaurus/types": "3.2.1",
+    "supabase": "^1.157.2",
     "typescript": "^5.3.3"
   },
   "browserslist": {
