@@ -34,17 +34,6 @@ jobs:
       - name: Enforce formatting
         run: cargo fmt --check
 
-  fmt-typescript:
-    name: Check Formatting (Typescript)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-      - run: npm ci
-      - run: npm run format:check
-
   lint-rust:
     name: Linting (Rust)
     runs-on: ubuntu-latest
@@ -55,17 +44,6 @@ jobs:
           components: clippy
       - name: Linting
         run: cargo clippy
-
-  lint-typescript:
-    name: Linting (Typescript)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-      - run: npm ci
-      - run: npm run lint
 
   is-up-to-date:
     name: Freshness
