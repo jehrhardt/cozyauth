@@ -1069,9 +1069,9 @@ dependencies = [
 
 [[package]]
 name = "pavex_tracing"
-version = "0.1.24"
+version = "0.1.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9c71a42abd8de0868f705c0ce4c64f8ca0b9933b8eaa75aa36859639058d2cb6"
+checksum = "ff1dc1612bcb511c38f6cf4edb37e64aee637b1b374c6957667cf313440c20c4"
 dependencies = [
  "pavex",
  "tracing",
