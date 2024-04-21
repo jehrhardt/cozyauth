@@ -1,4 +1,3 @@
 [workspace]
-members = ["app", "server_sdk", "server"]
-default-members = ["server"]
+members = ["server"]
 resolver = "2"
