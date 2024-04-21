@@ -2,27 +2,22 @@ FROM rust:1.77.2-alpine3.19 as builder
 
 WORKDIR /app
 
-ARG RUSTFLAGS="-C target-feature=-crt-static"
-
 RUN apk add --no-cache \
   musl-dev \
   openssl-dev
 
 COPY . .
 
-RUN cargo build --release
+RUN cargo build --release --bin cozyauth-server
 
 FROM alpine:3.19
 
-WORKDIR /app
+WORKDIR /cozyauth
 ENTRYPOINT ["cozyauth"]
-ENV APP_PROFILE=prod
 
 RUN apk add --no-cache \
-  openssl \
-  libgcc
+  openssl
 
-COPY --from=builder /app/target/release/server /usr/local/bin/cozyauth
-COPY --from=builder /app/server/configuration server/configuration
+COPY --from=builder /app/target/release/cozyauth-server /usr/local/bin/cozyauth
 
 USER nobody
