@@ -9,7 +9,8 @@ pub fn handle_request(req: Request) -> Response {
 }
 
 fn health() {
-  let status = json.object([#("status", json.string("✅"))])
-  let body = json.to_string_builder(status)
-  wisp.json_response(body, 200)
+  [#("status", json.string("✅"))]
+  |> json.object()
+  |> json.to_string_builder()
+  |> wisp.json_response(200)
 }
