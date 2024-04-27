@@ -1,27 +1,25 @@
 # cozyauth
 
-Easy Passkey authentication for Supabase and Postgres.
+[![Package Version](https://img.shields.io/hexpm/v/cozyauth)](https://hex.pm/packages/cozyauth)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/cozyauth/)
 
-## Usage
+```sh
+gleam add cozyauth
+```
+```gleam
+import cozyauth
 
-Currently, cozyauth under development and not yet ready for production use.
-
-If you want to try it out, you can do so by following the instructions below.
-
-### Prerequisites
-
-To run it locally you need to have the following tools installed:
-
-- [Docker](https://docs.docker.com/get-docker/)
-
-### Installation
-
-Run it locally with:
-
-```bash
-docker run --rm -p 3000:3000 ghcr.io/cozydev-labs/cozyauth:main
+pub fn main() {
+  // TODO: An example of the project in use
+}
 ```
 
-## License
+Further documentation can be found at <https://hexdocs.pm/cozyauth>.
 
-This project is licensed under the AGPL-3.0-or-later ([LICENSE](LICENSE).
+## Development
+
+```sh
+gleam run   # Run the project
+gleam test  # Run the tests
+gleam shell # Run an Erlang shell
+```
