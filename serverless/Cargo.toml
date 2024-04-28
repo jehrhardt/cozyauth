@@ -1,11 +1,12 @@
 [package]
-name = "cozyauth-server"
+name = "cozyauth-serverless"
 version = "0.1.0"
 edition = "2021"
-license = "GPL-3.0-or-later"
+license = "AGPL-3.0-or-later"
 
 [dependencies]
 axum = "0.7.5"
+cozyauth-server = { path = "../server" }
 tokio = { version = "1.37.0", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }

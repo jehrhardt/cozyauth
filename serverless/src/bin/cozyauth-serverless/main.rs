@@ -1,7 +1,7 @@
 // © Copyright 2024 the cozyauth developers
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use std::net::{IpAddr, Ipv6Addr, SocketAddr};
 
 use cozyauth_server::app;
 use tokio::net::TcpListener;
@@ -19,9 +19,9 @@ async fn main() {
         .init();
     let app = app::app();
     let ip_address: IpAddr = if cfg!(debug_assertions) {
-        Ipv4Addr::LOCALHOST.into()
+        Ipv6Addr::LOCALHOST.into()
     } else {
-        Ipv4Addr::UNSPECIFIED.into()
+        Ipv6Addr::UNSPECIFIED.into()
     };
     let socket_address = SocketAddr::new(ip_address, app::server_port());
     let listener = TcpListener::bind(&socket_address).await.unwrap();
