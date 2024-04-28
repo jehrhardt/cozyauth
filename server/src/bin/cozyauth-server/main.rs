@@ -1,6 +1,6 @@
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
-use server::app;
+use cozyauth_server::app;
 use tokio::net::TcpListener;
 use tracing::info;
 use tracing_subscriber::{self, layer::SubscriberExt, util::SubscriberInitExt};
