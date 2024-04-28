@@ -6,6 +6,7 @@ license = "GPL-3.0-or-later"
 
 [dependencies]
 axum = "0.7.5"
+sqlx = { version = "0.7.4", features = ["postgres", "runtime-tokio", "tls-rustls", "json", "chrono", "uuid"] }
 tokio = { version = "1.37.0", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
