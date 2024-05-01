@@ -66,8 +66,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  build-image-serverless:
-    name: Build container image for cozyauth-serverless
+  build-image-cloud:
+    name: Build container image for cozyauth-cloud
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

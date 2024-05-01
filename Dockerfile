@@ -12,9 +12,9 @@ FROM builder AS server-builder
 
 RUN cargo build --release --bin cozyauth-server
 
-FROM builder AS serverless-builder
+FROM builder AS cloud-builder
 
-RUN cargo build --release --bin cozyauth-serverless
+RUN cargo build --release --bin cozyauth-cloud
 
 FROM alpine:3.19 AS release
 
@@ -32,6 +32,6 @@ USER nobody
 
 FROM release
 
-COPY --from=serverless-builder /app/target/release/cozyauth-serverless /usr/local/bin/cozyauth
+COPY --from=cloud-builder /app/target/release/cozyauth-cloud /usr/local/bin/cozyauth
 
 USER nobody

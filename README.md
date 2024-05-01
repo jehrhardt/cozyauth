@@ -24,7 +24,7 @@ docker run --rm -p 3000:3000 ghcr.io/cozydev-labs/cozyauth:main
 
 ## License
 
-This project is licensed mostly under the GPL-3.0-or-later
-([LICENSE](LICENSE-GPL-3.0-or-later)). Except the code in the serverless
-directory, which is licensed under AGPL-3.0-or-later
-([LICENSE](LICENSE-AGPL-3.0-or-later)).
+This project is licensed as follows:
+
+- Code in the `core` directory is licensed under [GPL-3.0-or-later](LICENSE-GPL-3.0-or-later)
+- Code in the `cloud` directory is licensed under [AGPL-3.0-or-later](LICENSE-AGPL-3.0-or-later)

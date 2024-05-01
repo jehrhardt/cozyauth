@@ -43,7 +43,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy:
-    name: Deploy cozyauth-serverless
+    name: Deploy cozyauth-cloud
     runs-on: ubuntu-latest
     concurrency: deploy-group
     steps:
