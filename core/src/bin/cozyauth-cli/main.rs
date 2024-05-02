@@ -3,6 +3,6 @@
 
 use cozyauth_core::cli;
 
-fn main() {
-    cli::run();
+fn main() -> color_eyre::Result<()> {
+    cli::run()
 }

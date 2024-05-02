@@ -4,6 +4,7 @@
 use clap::{Parser, Subcommand};
 
 mod auth;
+mod tui;
 
 #[derive(Parser)]
 #[command(name = "cozyauth", version, about, long_about = None)]
@@ -20,12 +21,14 @@ enum Commands {
     },
 }
 
-pub fn run() {
+pub fn run() -> color_eyre::Result<()> {
     let cli = Cli::parse();
 
     if let Some(cmd) = cli.command {
         match cmd {
             Commands::Auth { command } => auth::run(command),
         }
+    } else {
+        Ok(())
     }
 }
