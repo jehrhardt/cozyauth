@@ -1,5 +1,4 @@
-// © Copyright 2024 the cozyauth developers
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// © Copyright 2024 Cozy Bytes GmbH
 
 use std::net::{IpAddr, Ipv6Addr, SocketAddr};
 
@@ -13,7 +12,7 @@ async fn main() {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "cozyauth_server=debug,axum::rejection=trace".into()),
+                .unwrap_or_else(|_| "cozyauth_ee_server=debug,axum::rejection=trace".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();

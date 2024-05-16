@@ -45,8 +45,8 @@ jobs:
       - name: Linting
         run: cargo clippy
 
-  build-image-server:
-    name: Build container image for cozyauth-server
+  build-image:
+    name: Build container image for cozyauth
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -66,8 +66,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  build-image-serverless:
-    name: Build container image for cozyauth-serverless
+  build-image-ee:
+    name: Build container image for cozyauth-ee
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
