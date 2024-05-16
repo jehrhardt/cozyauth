@@ -13,7 +13,7 @@ async fn main() {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "cozyauth_server=debug,axum::rejection=trace".into()),
+                .unwrap_or_else(|_| "cozyauth_ee_server=debug,axum::rejection=trace".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();

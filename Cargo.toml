@@ -1,3 +1,3 @@
 [workspace]
-members = ["server", "serverless"]
+members = ["server", "ee/server"]
 resolver = "2"
