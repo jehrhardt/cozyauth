@@ -12,8 +12,19 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  test:
-    name: Test
+  test-rust:
+    name: Test Rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build tests
+        run: cargo test --no-run
+      - name: Run tests
+        run: cargo test
+
+  test-gleam:
+    name: Test Gleam
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -31,13 +42,16 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Build tests
-        run: cargo test --no-run
-      - name: Run tests
-        run: cargo test
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "26.2.1" # Same version as in Alpine Linux 3.19
+          gleam-version: "1.1.0"
+          rebar3-version: "3"
+          elixir-version: "1.16.2"
+      - run: gleam deps download
+      - run: gleam test
 
-  fmt:
+  fmt-rust:
     name: Check Formatting
     runs-on: ubuntu-latest
     steps:
@@ -48,8 +62,15 @@ jobs:
       - name: Enforce formatting
         run: cargo fmt --check
 
+  fmt-gleam:
+    name: Check Formatting Gleam
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: gleam format --check src test
+
   lint:
-    name: Linting
+    name: Linting Rust
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
