@@ -1,4 +1,4 @@
-FROM rust:1.78.0-alpine3.19 AS builder
+FROM rust:1.78.0-alpine3.19 AS rust-builder
 
 WORKDIR /app
 
@@ -8,30 +8,25 @@ RUN apk add --no-cache \
 
 COPY . .
 
-FROM builder AS server-builder
-
 RUN cargo build --release --bin cozyauth-server
 
-FROM builder AS ee-server-builder
+FROM ghcr.io/gleam-lang/gleam:v1.1.0-erlang-alpine AS gleam-builder
 
-RUN cargo build --release --bin cozyauth-ee-server
+WORKDIR /app
+COPY . .
 
-FROM alpine:3.19 AS release
+RUN gleam export erlang-shipment
+
+FROM alpine:3.19
 
 WORKDIR /cozyauth
-ENTRYPOINT ["cozyauth"]
+ENTRYPOINT ["/cozyauth/entrypoint.sh"]
+CMD ["run"]
 
 RUN apk add --no-cache \
-  openssl
+  openssl \
+  erlang
 
-FROM release AS server
-
-COPY --from=server-builder /app/target/release/cozyauth-server /usr/local/bin/cozyauth
-
-USER nobody
-
-FROM release
-
-COPY --from=ee-server-builder /app/target/release/cozyauth-ee-server /usr/local/bin/cozyauth
+COPY --from=gleam-builder /app/build/erlang-shipment /cozyauth
 
 USER nobody
