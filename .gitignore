@@ -1,10 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
-node_modules
-.pnp
-.pnp.js
-
 # Local env files
 .env
 .env.local
@@ -12,29 +7,13 @@ node_modules
 .env.test.local
 .env.production.local
 
-# Testing
-coverage
-
-# Turbo
-.turbo
-
-# Build Outputs
-out/
-build
-dist
-/.cache
-.docusaurus
-.cache-loader
-
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
 # Misc
 .DS_Store
 *.pem
 
 # Rust build artifacts
 /target
+/priv/native
 
+# Gleam build artifacts
+/build

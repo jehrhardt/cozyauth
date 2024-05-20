@@ -1,0 +1,12 @@
+[package]
+name = "cozyauth-passkeys"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "cozyauth_passkeys"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.32.1"
