@@ -7,9 +7,16 @@ license = "AGPL-3.0-or-later"
 [dependencies]
 cozyauth-ee = { path = "../ee", optional = true }
 axum = "0.7.5"
+serde = { version = "1.0.202", features = ["derive"] }
+serde_json = "1.0.117"
 tokio = { version = "1.37.0", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+
+[dev-dependencies]
+http-body-util = "0.1.1"
+mime = "0.3.17"
+tower = { version = "0.4.13", features = ["util"] }
 
 [features]
 ee = ["dep:cozyauth-ee"]
