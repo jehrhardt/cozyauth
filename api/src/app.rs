@@ -1,12 +1,14 @@
 // © Copyright 2024 the cozyauth developers
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-use crate::health;
+use crate::{health, passkeys};
 use axum::Router;
 use tokio::signal;
 
 pub fn app() -> Router {
-    Router::new().merge(health::router())
+    Router::new()
+        .merge(health::router())
+        .nest("/passkeys", passkeys::router())
 }
 
 pub fn server_port() -> u16 {
