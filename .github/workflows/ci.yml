@@ -62,7 +62,7 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v4
-      - uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21
+      - uses: erlef/setup-beam@2f0cc07b4b9bea248ae098aba9e1a8a1de5ec24c
         with:
           elixir-version: "1.16.3"
           otp-version: "26.2.5"
