@@ -37,13 +37,12 @@ jobs:
         with:
           context: .
           push: true
-          target: server
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy:
-    name: Deploy to fly.io
+    name: Deploy app to fly.io
     runs-on: ubuntu-latest
     concurrency: deploy-group
     steps:
@@ -52,3 +51,4 @@ jobs:
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        working-directory: ./app
