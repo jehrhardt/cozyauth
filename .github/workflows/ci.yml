@@ -12,8 +12,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  test:
-    name: Test
+  test-rust:
+    name: Test Rust
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -32,32 +32,54 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt,clippy
+      - name: Check formatting
+        run: cargo fmt --check
+      - name: Linting
+        run: cargo clippy
       - name: Build tests
         run: cargo test --no-run
       - name: Run tests
         run: cargo test
 
-  fmt:
-    name: Check Formatting
+  test-elixir:
+    name: Test Elixir
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cozyauth_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21
         with:
-          components: rustfmt
-      - name: Enforce formatting
-        run: cargo fmt --check
-
-  lint:
-    name: Linting
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
+          elixir-version: "1.16.3"
+          otp-version: "26.2.5"
+      - uses: actions/cache@v3
         with:
-          components: clippy
-      - name: Linting
-        run: cargo clippy
+          path: app/deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+      - name: Install dependencies
+        run: mix deps.get
+        working-directory: ./app
+      - name: Check Formatting
+        run: mix format --check-formatted
+        working-directory: ./app
+      - name: Run tests
+        run: mix test
+        working-directory: ./app
 
   build-image:
     name: Build container image for cozyauth
