@@ -10,7 +10,7 @@ COPY . .
 
 RUN cargo build --release --bin cozyauth-server
 
-FROM alpine:3.19
+FROM alpine:3.20
 
 WORKDIR /cozyauth
 ENTRYPOINT ["cozyauth"]
