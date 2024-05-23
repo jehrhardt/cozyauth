@@ -8,15 +8,9 @@ RUN apk add --no-cache \
 
 COPY . .
 
-FROM builder AS server-builder
-
 RUN cargo build --release --bin cozyauth-server
 
-FROM builder AS ee-server-builder
-
-RUN cargo build --release --bin cozyauth-ee-server
-
-FROM alpine:3.19 AS release
+FROM alpine:3.19
 
 WORKDIR /cozyauth
 ENTRYPOINT ["cozyauth"]
@@ -24,14 +18,6 @@ ENTRYPOINT ["cozyauth"]
 RUN apk add --no-cache \
   openssl
 
-FROM release AS server
-
-COPY --from=server-builder /app/target/release/cozyauth-server /usr/local/bin/cozyauth
-
-USER nobody
-
-FROM release
-
-COPY --from=ee-server-builder /app/target/release/cozyauth-ee-server /usr/local/bin/cozyauth
+COPY --from=builder /app/target/release/cozyauth-server /usr/local/bin/cozyauth
 
 USER nobody
