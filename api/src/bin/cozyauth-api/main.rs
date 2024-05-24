@@ -3,7 +3,7 @@
 
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
-use cozyauth_server::app;
+use cozyauth_api::app;
 use tokio::net::TcpListener;
 use tracing::info;
 use tracing_subscriber::{self, layer::SubscriberExt, util::SubscriberInitExt};
@@ -13,7 +13,7 @@ async fn main() {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "cozyauth_server=debug,axum::rejection=trace".into()),
+                .unwrap_or_else(|_| "cozyauth_api=debug,axum::rejection=trace".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();

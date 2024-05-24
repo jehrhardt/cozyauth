@@ -1,3 +1,3 @@
 [workspace]
-members = ["server", "ee/server"]
+members = ["api", "ee"]
 resolver = "2"
