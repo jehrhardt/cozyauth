@@ -1,15 +1,49 @@
-FROM hexpm/elixir:1.16.3-erlang-26.2.5-ubuntu-noble-20240429 as builder
+FROM ubuntu:noble-20240429 AS api-builder
+
+WORKDIR /app
+
+# Get Ubuntu packages
+RUN apt-get update -y \
+    && apt-get install -y \
+    build-essential \
+    curl \
+    && apt-get clean \
+    && rm -f /var/lib/apt/lists/*_*
+
+# Get Rust
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+COPY . .
+
+RUN cargo build --release --bin cozyauth-api
+
+FROM ubuntu:noble-20240429 AS api
+
+WORKDIR /cozyauth
+ENTRYPOINT ["cozyauth"]
+
+COPY --from=api-builder /app/target/release/cozyauth-api /usr/local/bin/cozyauth
+
+USER nobody
+
+FROM hexpm/elixir:1.16.3-erlang-26.2.5-ubuntu-noble-20240429 AS app-builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
-    && apt-get clean && rm -f /var/lib/apt/lists/*_*
+RUN apt-get update -y \
+    && apt-get install -y \
+    build-essential \
+    git \
+    && apt-get clean \
+    && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
 WORKDIR /app
 
 # install hex + rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
+RUN mix local.hex --force \
+    && mix local.rebar --force
 
 # set build ENV
 ENV MIX_ENV="prod"
@@ -45,9 +79,16 @@ RUN mix release
 
 FROM ubuntu:noble-20240429
 
-RUN apt-get update -y && \
-  apt-get install -y libstdc++6 openssl libncurses6 locales ca-certificates \
-  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+CMD ["/app/bin/server"]
+
+RUN apt-get update -y \
+  && apt-get install -y \
+  libstdc++6 \
+  openssl \
+  libncurses6 \
+  locales ca-certificates \
+  && apt-get clean \
+  && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -63,13 +104,6 @@ RUN chown nobody /app
 ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/cozyauth ./
+COPY --from=app-builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/cozyauth ./
 
 USER nobody
-
-# If using an environment that doesn't automatically reap zombie processes, it is
-# advised to add an init process such as tini via `apt-get install`
-# above and adding an entrypoint. See https://github.com/krallin/tini for details
-# ENTRYPOINT ["/tini", "--"]
-
-CMD ["/app/bin/server"]
