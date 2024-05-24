@@ -73,13 +73,10 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-
       - name: Install dependencies
         run: mix deps.get
-        working-directory: ./app
       - name: Check Formatting
         run: mix format --check-formatted
-        working-directory: ./app
       - name: Run tests
         run: mix test
-        working-directory: ./app
 
   build-image:
     name: Build container image for cozyauth
@@ -97,6 +94,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          target: api
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -116,7 +114,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v5
         with:
-          context: ./app
+          context: .
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
