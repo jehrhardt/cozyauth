@@ -6,6 +6,8 @@ WORKDIR /app
 RUN apt-get update -y \
     && apt-get install -y \
     build-essential \
+    pkg-config \
+    libssl-dev \
     curl \
     && apt-get clean \
     && rm -f /var/lib/apt/lists/*_*
