@@ -1,6 +1,6 @@
 #[rustler::nif]
-fn add(a: i64, b: i64) -> i64 {
-    a + b
+fn start_passkey_registration() -> String {
+    "Hello world!".to_string()
 }
 
-rustler::init!("Elixir.Cozyauth.Passkeys", [add]);
+rustler::init!("Elixir.Cozyauth.Passkeys", [start_passkey_registration]);
