@@ -58,7 +58,8 @@ defmodule Cozyauth.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:rustler, "~> 0.32.1", runtime: false}
+      {:rustler, "~> 0.32.1", runtime: false},
+      {:faker, "~> 0.18", only: :test}
     ]
   end
 
