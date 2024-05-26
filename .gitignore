@@ -31,6 +31,9 @@ cozyauth-*.tar
 # Ignore digested assets cache.
 /priv/static/cache_manifest.json
 
+# Ignore Rustler native libs
+/priv/native/
+
 # In case you use Node.js/npm, you want to ignore these.
 npm-debug.log
 /assets/node_modules/
