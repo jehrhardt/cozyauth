@@ -28,7 +28,7 @@ COPY --from=api-builder /app/target/release/cozyauth-api /usr/local/bin/cozyauth
 
 USER nobody
 
-FROM hexpm/elixir:1.16.3-erlang-26.2.5-ubuntu-noble-20240429 AS app-builder
+FROM hexpm/elixir:1.17.0-rc.0-erlang-27.0-ubuntu-noble-20240429 AS app-builder
 
 # install build dependencies
 RUN apt-get update -y \
