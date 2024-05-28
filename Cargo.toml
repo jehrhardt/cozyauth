@@ -1,3 +1,11 @@
 [workspace]
 members = ["server", "passkeys", "ee/licenses"]
 resolver = "2"
+
+[workspace.dependencies]
+cozyauth-passkeys = { path = "./passkeys" }
+cozyauth-licenses = { path = "./ee/licenses" }
+axum = "0.7.5"
+tokio = "1.37.0"
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
