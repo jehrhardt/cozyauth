@@ -5,11 +5,12 @@ edition = "2021"
 license = "AGPL-3.0-or-later"
 
 [dependencies]
-cozyauth-ee = { path = "../ee", optional = true }
+cozyauth-licenses = { path = "../ee/licenses", optional = true }
+cozyauth-passkeys = { path = "../passkeys" }
 axum = "0.7.5"
 tokio = { version = "1.37.0", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 
 [features]
-ee = ["dep:cozyauth-ee"]
+ee = ["dep:cozyauth-licenses"]
