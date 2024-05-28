@@ -36,7 +36,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          target: api
+          build-args: |
+            BINARY=cozyauth-server
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
