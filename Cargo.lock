@@ -209,7 +209,12 @@ dependencies = [
  "cozyauth-licenses",
  "cozyauth-passkeys",
  "cozyauth-relying-parties",
+ "http-body-util",
+ "mime",
+ "serde",
+ "serde_json",
  "tokio",
+ "tower",
  "tracing",
  "tracing-subscriber",
 ]

@@ -10,8 +10,15 @@ cozyauth-relying-parties = { workspace = true, optional = true }
 cozyauth-licenses = { workspace = true, optional = true }
 axum = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true, features = ["env-filter"] }
+
+[dev-dependencies]
+http-body-util = { workspace = true }
+mime = { workspace = true }
+tower = { workspace = true, features = ["util"] }
 
 [features]
 ee = ["dep:cozyauth-relying-parties", "dep:cozyauth-licenses"]
