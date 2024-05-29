@@ -1,35 +1,27 @@
 // © Copyright 2024 the cozyauth developers
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-use tokio::signal;
+use axum::extract::FromRef;
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
-pub fn server_port() -> u16 {
-    std::env::var("PORT")
-        .ok()
-        .and_then(|port| port.parse().ok())
-        .unwrap_or(3000)
+#[derive(Clone)]
+pub struct Context {
+    pub(crate) passkeys_context: cozyauth_passkeys::Context,
 }
 
-pub async fn shutdown_signal() {
-    let ctrl_c = async {
-        signal::ctrl_c()
-            .await
-            .expect("failed to install Ctrl+C handler");
-    };
+impl Context {
+    pub fn new() -> Self {
+        let relying_party = cozyauth_passkeys::RelyingParty {
+            domain: "https://example.com".to_string(),
+            name: None,
+        };
+        let passkeys_context = cozyauth_passkeys::Context { relying_party };
+        Context { passkeys_context }
+    }
+}
 
-    #[cfg(unix)]
-    let terminate = async {
-        signal::unix::signal(signal::unix::SignalKind::terminate())
-            .expect("failed to install signal handler")
-            .recv()
-            .await;
-    };
-
-    #[cfg(not(unix))]
-    let terminate = std::future::pending::<()>();
-
-    tokio::select! {
-        _ = ctrl_c => {},
-        _ = terminate => {},
+impl FromRef<Context> for cozyauth_passkeys::Context {
+    fn from_ref(context: &Context) -> Self {
+        context.passkeys_context.clone()
     }
 }
