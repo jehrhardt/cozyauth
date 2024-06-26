@@ -1,8 +1,0 @@
-[package]
-name = "cozyauth-relying-parties"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-askama = { workspace = true, features = ["with-axum"] }
-askama_axum = { workspace = true }
