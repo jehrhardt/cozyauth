@@ -45,52 +45,8 @@ jobs:
       - name: Linting
         run: cargo clippy
 
-  build-server-image:
-    name: Build container image for cozyauth-server
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: Build
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          build-args: |
-            BINARY=cozyauth-server
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-  build-ee-image:
-    name: Build container image for cozyauth-ee-server
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: Build
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          build-args: |
-            BINARY=cozyauth-ee-server
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-  build-cloud-image:
-    name: Build container image for cozyauth-cloud
+  build-image:
+    name: Build container image for cozyauth
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
