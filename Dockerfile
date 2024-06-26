@@ -8,8 +8,7 @@ RUN apk add --no-cache \
 
 COPY . .
 
-ARG BINARY=cozyauth-cloud
-RUN cargo build --release --bin ${BINARY}
+RUN cargo build --release --bin cozyauth
 
 FROM alpine:3.20
 
@@ -19,7 +18,6 @@ ENTRYPOINT ["cozyauth"]
 RUN apk add --no-cache \
   openssl
 
-ARG BINARY=cozyauth-cloud
-COPY --from=builder /app/target/release/${BINARY} /usr/local/bin/cozyauth
+COPY --from=builder /app/target/release/cozyauth /usr/local/bin/cozyauth
 
 USER nobody
