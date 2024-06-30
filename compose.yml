@@ -7,3 +7,12 @@ services:
       POSTGRES_DB: cozyauth_test
     ports:
       - "127.0.0.1:5432:5432"
+
+  page:
+    image: ghcr.io/getzola/zola:v0.19.1
+    volumes:
+      - "./page/:/app/"
+    working_dir: "/app"
+    ports:
+      - "127.0.0.1:8080:8080"
+    command: serve --interface 0.0.0.0 --port 8080 --base-url localhost
