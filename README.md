@@ -19,5 +19,5 @@ To run it locally you need to have the following tools installed:
 Run it locally with:
 
 ```bash
-docker run --rm -p 3000:3000 ghcr.io/cozydev-labs/cozyauth:main
+docker run --rm -p 8000:8000 ghcr.io/cozystack/cozyauth:main
 ```
