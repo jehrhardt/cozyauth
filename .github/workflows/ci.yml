@@ -17,26 +17,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: erlef/setup-beam@v1
-        with:
-          otp-version: "27.0"
-          gleam-version: "1.2.1"
-          rebar3-version: "3"
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build tests
+        run: cargo test --no-run
+      - name: Run tests
+        run: cargo test
+
+  fmt:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          components: rustfmt,clippy
-      - name: Install Gleam dependencies
-        run: gleam deps download
-      - name: Enforce Gleam formatting
-        run: gleam format --check src test
-      - name: Enforce Rust formatting
+          components: rustfmt
+      - name: Enforce formatting
         run: cargo fmt --check
-      - name: Rust Linting
+
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
+      - name: Linting
         run: cargo clippy
-      - name: Run Gleam tests
-        run: gleam test
-      - name: Run Rust tests
-        run: cargo test
 
   build-image:
     name: Build container image for cozyauth
