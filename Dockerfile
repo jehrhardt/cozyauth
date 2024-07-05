@@ -14,6 +14,7 @@ FROM alpine:3.20
 
 WORKDIR /cozyauth
 ENTRYPOINT ["cozyauth"]
+CMD [ "server" ]
 
 RUN apk add --no-cache \
   openssl
