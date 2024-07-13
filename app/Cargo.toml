@@ -20,3 +20,9 @@ tokio = { version = "1.38.1", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 url = { version = "2.5.2", features = ["serde"] }
+webauthn-rs = { version = "0.5.0", features = ["danger-allow-state-serialisation"] }
+
+[dev-dependencies]
+http-body-util = "0.1.2"
+mime = "0.3.17"
+tower = { version = "0.4.13", features = ["util"] }
