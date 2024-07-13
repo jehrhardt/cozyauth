@@ -14,7 +14,7 @@ fn router() -> Router {
     Router::new().merge(health::router())
 }
 
-pub async fn start_server() {
+pub(crate) async fn start_server(settings: &Settings) {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
@@ -22,13 +22,12 @@ pub async fn start_server() {
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
-    let settings = Settings::new().expect("unable to read settings");
     let ip_address: IpAddr = if cfg!(debug_assertions) {
         Ipv4Addr::LOCALHOST.into()
     } else {
         Ipv4Addr::UNSPECIFIED.into()
     };
-    let socket_address = SocketAddr::new(ip_address, settings.port);
+    let socket_address = SocketAddr::new(ip_address, settings.port.unwrap_or(3000));
     let listener = TcpListener::bind(&socket_address).await.unwrap();
     info!("Listening on {}", socket_address);
     axum::serve(listener, router().into_make_service())

@@ -2,5 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 mod api;
-pub mod app;
+mod app;
+pub mod cli;
 mod config;
+mod db;

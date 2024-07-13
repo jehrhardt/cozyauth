@@ -15,35 +15,35 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cozyauth_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt,clippy
+      - name: Enforce formatting
+        run: cargo fmt --check
+      - name: Linting
+        run: cargo clippy
       - name: Build tests
         run: cargo test --no-run
       - name: Run tests
         run: cargo test
-
-  fmt:
-    name: Check Formatting
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          components: rustfmt
-      - name: Enforce formatting
-        run: cargo fmt --check
-
-  lint:
-    name: Linting
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          components: clippy
-      - name: Linting
-        run: cargo clippy
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
 
   build-image:
     name: Build container image for cozyauth
