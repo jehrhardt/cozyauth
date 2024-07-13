@@ -14,10 +14,28 @@ To run it locally you need to have the following tools installed:
 
 - [Docker](https://docs.docker.com/get-docker/)
 
-### Installation
+### Development
 
-Run it locally with:
+Start Postgres:
 
 ```bash
-docker run --rm -p 3000:3000 ghcr.io/cozydev-labs/cozyauth:main
+docker compose up -d
+```
+
+Apply database migrations:
+
+```bash
+cargo run migrate
+```
+
+Start the server locally:
+
+```bash
+cargo run server
+```
+
+Check the server is running with:
+
+```bash
+curl http://localhost:3000/health
 ```
