@@ -8,10 +8,15 @@ use tokio::{net::TcpListener, signal};
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-use crate::{api::health, config::Settings};
+use crate::{
+    api::{health, passkeys},
+    config::Settings,
+};
 
 fn router() -> Router {
-    Router::new().merge(health::router())
+    Router::new()
+        .merge(health::router())
+        .nest("/passkeys", passkeys::router())
 }
 
 pub(crate) async fn start_server(settings: &Settings) {
