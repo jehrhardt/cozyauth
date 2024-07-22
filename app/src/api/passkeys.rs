@@ -1,7 +1,12 @@
 // © Copyright 2024 the cozyauth developers
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
+use axum::{
+    http::{header, StatusCode},
+    response::IntoResponse,
+    routing::post,
+    Json, Router,
+};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use webauthn_rs::prelude::*;
@@ -13,6 +18,8 @@ struct User {
     name: String,
     display_name: Option<String>,
 }
+
+static DUMMY_REG_ID: &str = "foo";
 
 async fn create(Json(user): Json<User>) -> impl IntoResponse {
     let rp_id = "localhost";
@@ -33,7 +40,15 @@ async fn create(Json(user): Json<User>) -> impl IntoResponse {
     let user_display_name = user.display_name.unwrap_or_else(|| user_name.to_string());
 
     match webauthn.start_passkey_registration(user.id, user_name, &user_display_name, None) {
-        Ok((ccr, _skr)) => (StatusCode::ACCEPTED, Json(ccr.public_key)).into_response(),
+        Ok((ccr, _skr)) => (
+            StatusCode::ACCEPTED,
+            [(
+                header::LOCATION,
+                format!("/passkeys/registrations/{}", DUMMY_REG_ID),
+            )],
+            Json(ccr.public_key),
+        )
+            .into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
 }
@@ -48,7 +63,7 @@ mod tests {
 
     use axum::{
         body::Body,
-        http::{self, Request, StatusCode},
+        http::{self, Request},
     };
     use base64::{engine::general_purpose, Engine};
     use http_body_util::BodyExt;
@@ -68,7 +83,7 @@ mod tests {
                 Request::builder()
                     .method(http::Method::POST)
                     .uri("/")
-                    .header(http::header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
+                    .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
                     .body(Body::from(serde_json::to_string(&user).unwrap()))
                     .unwrap(),
             )
@@ -79,11 +94,20 @@ mod tests {
         assert_eq!(
             response
                 .headers()
-                .get(http::header::CONTENT_TYPE)
+                .get(header::CONTENT_TYPE)
                 .unwrap()
                 .to_str()
                 .unwrap(),
             mime::APPLICATION_JSON
+        );
+        assert_eq!(
+            response
+                .headers()
+                .get(header::LOCATION)
+                .unwrap()
+                .to_str()
+                .unwrap(),
+            "/passkeys/registrations/foo"
         );
 
         let body = response.into_body().collect().await.unwrap().to_bytes();
