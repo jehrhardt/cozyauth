@@ -24,6 +24,7 @@ uuid = { version = "1.10.0", features = ["v4", "serde"] }
 webauthn-rs = { version = "0.5.0", features = ["danger-allow-state-serialisation"] }
 
 [dev-dependencies]
+base64 = "0.22.1"
 http-body-util = "0.1.2"
 mime = "0.3.17"
 tower = { version = "0.4.13", features = ["util"] }
