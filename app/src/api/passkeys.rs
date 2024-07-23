@@ -12,6 +12,11 @@ use uuid::Uuid;
 use webauthn_rs::prelude::*;
 
 #[derive(Serialize, Deserialize)]
+struct CreationParams {
+    user: User,
+}
+
+#[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct User {
     id: Uuid,
@@ -21,7 +26,7 @@ struct User {
 
 static DUMMY_REG_ID: &str = "foo";
 
-async fn create(Json(user): Json<User>) -> impl IntoResponse {
+async fn create(Json(creation_params): Json<CreationParams>) -> impl IntoResponse {
     let rp_id = "localhost";
     let rp_origin = Url::parse("http://localhost")
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
@@ -36,6 +41,7 @@ async fn create(Json(user): Json<User>) -> impl IntoResponse {
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
         .unwrap();
 
+    let user = creation_params.user;
     let user_name = user.name.as_str();
     let user_display_name = user.display_name.unwrap_or_else(|| user_name.to_string());
 
@@ -67,7 +73,7 @@ mod tests {
     };
     use base64::{engine::general_purpose, Engine};
     use http_body_util::BodyExt;
-    use serde_json::Value;
+    use serde_json::{json, Value};
     use tower::ServiceExt;
 
     #[tokio::test]
@@ -84,7 +90,9 @@ mod tests {
                     .method(http::Method::POST)
                     .uri("/")
                     .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
-                    .body(Body::from(serde_json::to_string(&user).unwrap()))
+                    .body(Body::from(
+                        serde_json::to_string(&json!({"user": {"id": user.id, "name": user.name, "displayName": user.display_name}})).unwrap(),
+                    ))
                     .unwrap(),
             )
             .await
