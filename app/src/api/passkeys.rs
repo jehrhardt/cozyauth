@@ -124,6 +124,55 @@ mod tests {
         assert_credential_creation_options(user, body)
     }
 
+    #[tokio::test]
+    async fn create_passkey_registration_without_display_name() {
+        let app = router();
+        let user = User {
+            id: Uuid::new_v4(),
+            name: "alice".to_string(),
+            display_name: None,
+        };
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method(http::Method::POST)
+                    .uri("/")
+                    .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
+                    .body(Body::from(
+                        serde_json::to_string(&json!({"user": {"id": user.id, "name": user.name}}))
+                            .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::ACCEPTED);
+        assert_eq!(
+            response
+                .headers()
+                .get(header::CONTENT_TYPE)
+                .unwrap()
+                .to_str()
+                .unwrap(),
+            mime::APPLICATION_JSON
+        );
+        assert_eq!(
+            response
+                .headers()
+                .get(header::LOCATION)
+                .unwrap()
+                .to_str()
+                .unwrap(),
+            "/passkeys/registrations/foo"
+        );
+
+        let body = response.into_body().collect().await.unwrap().to_bytes();
+        let body: Value = serde_json::from_slice(&body).unwrap();
+
+        assert_credential_creation_options(user, body)
+    }
+
     fn assert_credential_creation_options(user: User, json: Value) {
         let rp = json.get("rp").unwrap();
         assert_eq!(rp.get("id").and_then(|v| v.as_str()), Some("localhost"));
@@ -143,7 +192,11 @@ mod tests {
             Some(user.name.as_str())
         );
 
-        let display_name = user.display_name.unwrap();
+        let display_name = match user.display_name {
+            Some(name) => name,
+            None => user.name,
+        };
+
         assert_eq!(
             user_json.get("displayName").and_then(|v| v.as_str()),
             Some(display_name.as_str())
