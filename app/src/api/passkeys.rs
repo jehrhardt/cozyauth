@@ -1,15 +1,11 @@
 // © Copyright 2024 the cozyauth developers
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-use axum::{
-    http::{header, StatusCode},
-    response::IntoResponse,
-    routing::post,
-    Json, Router,
-};
+use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use webauthn_rs::prelude::*;
+use webauthn_rs_proto::PublicKeyCredentialCreationOptions;
 
 #[derive(Serialize, Deserialize)]
 struct CreationParams {
@@ -24,7 +20,12 @@ struct User {
     display_name: Option<String>,
 }
 
-static DUMMY_REG_ID: &str = "foo";
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct Registration {
+    id: Uuid,
+    public_key_credential_creation_options: PublicKeyCredentialCreationOptions,
+}
 
 async fn create(Json(creation_params): Json<CreationParams>) -> impl IntoResponse {
     let rp_id = "localhost";
@@ -46,15 +47,13 @@ async fn create(Json(creation_params): Json<CreationParams>) -> impl IntoRespons
     let user_display_name = user.display_name.unwrap_or_else(|| user_name.to_string());
 
     match webauthn.start_passkey_registration(user.id, user_name, &user_display_name, None) {
-        Ok((ccr, _skr)) => (
-            StatusCode::ACCEPTED,
-            [(
-                header::LOCATION,
-                format!("/passkeys/registrations/{}", DUMMY_REG_ID),
-            )],
-            Json(ccr.public_key),
-        )
-            .into_response(),
+        Ok((ccr, _skr)) => {
+            let registration = Registration {
+                id: user.id,
+                public_key_credential_creation_options: ccr.public_key,
+            };
+            (StatusCode::OK, Json(registration)).into_response()
+        }
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
 }
@@ -69,7 +68,7 @@ mod tests {
 
     use axum::{
         body::Body,
-        http::{self, Request},
+        http::{self, header, Request},
     };
     use base64::{engine::general_purpose, Engine};
     use http_body_util::BodyExt;
@@ -98,7 +97,7 @@ mod tests {
             .await
             .unwrap();
 
-        assert_eq!(response.status(), StatusCode::ACCEPTED);
+        assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
             response
                 .headers()
@@ -108,19 +107,8 @@ mod tests {
                 .unwrap(),
             mime::APPLICATION_JSON
         );
-        assert_eq!(
-            response
-                .headers()
-                .get(header::LOCATION)
-                .unwrap()
-                .to_str()
-                .unwrap(),
-            "/passkeys/registrations/foo"
-        );
-
         let body = response.into_body().collect().await.unwrap().to_bytes();
         let body: Value = serde_json::from_slice(&body).unwrap();
-
         assert_credential_creation_options(user, body)
     }
 
@@ -147,7 +135,7 @@ mod tests {
             .await
             .unwrap();
 
-        assert_eq!(response.status(), StatusCode::ACCEPTED);
+        assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(
             response
                 .headers()
@@ -157,16 +145,6 @@ mod tests {
                 .unwrap(),
             mime::APPLICATION_JSON
         );
-        assert_eq!(
-            response
-                .headers()
-                .get(header::LOCATION)
-                .unwrap()
-                .to_str()
-                .unwrap(),
-            "/passkeys/registrations/foo"
-        );
-
         let body = response.into_body().collect().await.unwrap().to_bytes();
         let body: Value = serde_json::from_slice(&body).unwrap();
 
@@ -174,10 +152,19 @@ mod tests {
     }
 
     fn assert_credential_creation_options(user: User, json: Value) {
-        let rp = json.get("rp").unwrap();
+        let regigstration_id = json.get("id").unwrap();
+        assert_eq!(
+            regigstration_id
+                .as_str()
+                .map(|v| Uuid::parse_str(v).unwrap()),
+            Some(user.id)
+        );
+
+        let creation_options = json.get("publicKeyCredentialCreationOptions").unwrap();
+        let rp = creation_options.get("rp").unwrap();
         assert_eq!(rp.get("id").and_then(|v| v.as_str()), Some("localhost"));
 
-        let user_json = json.get("user").unwrap();
+        let user_json = creation_options.get("user").unwrap();
         let user_id = user.id.as_bytes().to_vec();
         assert_eq!(
             user_json
@@ -202,13 +189,13 @@ mod tests {
             Some(display_name.as_str())
         );
 
-        assert!(json
+        assert!(creation_options
             .get("challenge")
             .map(|v| v.as_str().unwrap())
             .map(|v| general_purpose::URL_SAFE_NO_PAD.decode(v).is_ok())
             .unwrap());
 
-        let pub_key_credentials_params = json
+        let pub_key_credentials_params = creation_options
             .get("pubKeyCredParams")
             .map(|v| v.as_array().unwrap())
             .unwrap();
@@ -226,9 +213,12 @@ mod tests {
             Some(-257)
         );
 
-        assert_eq!(json.get("timeout").and_then(|v| v.as_u64()), Some(300000));
+        assert_eq!(
+            creation_options.get("timeout").and_then(|v| v.as_u64()),
+            Some(300000)
+        );
 
-        let authenticator_selection = json.get("authenticatorSelection").unwrap();
+        let authenticator_selection = creation_options.get("authenticatorSelection").unwrap();
         assert_eq!(
             authenticator_selection
                 .get("residentKey")
@@ -249,11 +239,11 @@ mod tests {
         );
 
         assert_eq!(
-            json.get("attestation").and_then(|v| v.as_str()),
+            creation_options.get("attestation").and_then(|v| v.as_str()),
             Some("none")
         );
 
-        let extensions = json.get("extensions").unwrap();
+        let extensions = creation_options.get("extensions").unwrap();
         assert_eq!(
             extensions
                 .get("credentialProtectionPolicy")
