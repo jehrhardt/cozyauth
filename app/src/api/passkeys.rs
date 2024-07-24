@@ -59,7 +59,7 @@ async fn create(Json(creation_params): Json<CreationParams>) -> impl IntoRespons
 }
 
 pub(crate) fn router() -> Router {
-    Router::new().route("/", post(create))
+    Router::new().route("/registrations", post(create))
 }
 
 #[cfg(test)]
@@ -87,7 +87,7 @@ mod tests {
             .oneshot(
                 Request::builder()
                     .method(http::Method::POST)
-                    .uri("/")
+                    .uri("/registrations")
                     .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
                     .body(Body::from(
                         serde_json::to_string(&json!({"user": {"id": user.id, "name": user.name, "displayName": user.display_name}})).unwrap(),
@@ -124,7 +124,7 @@ mod tests {
             .oneshot(
                 Request::builder()
                     .method(http::Method::POST)
-                    .uri("/")
+                    .uri("/registrations")
                     .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
                     .body(Body::from(
                         serde_json::to_string(&json!({"user": {"id": user.id, "name": user.name}}))
