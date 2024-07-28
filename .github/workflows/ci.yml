@@ -34,12 +34,22 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt,clippy
+      - name: Setup Postgres
+        run: |
+          cargo install sqlx-cli
+          sqlx migrate run --source app/migrations
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
       - name: Enforce formatting
         run: cargo fmt --check
       - name: Linting
         run: cargo clippy
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
       - name: Build tests
         run: cargo test --no-run
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
       - name: Run tests
         run: cargo test
         env:
