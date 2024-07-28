@@ -3,9 +3,10 @@
 
 use url::Url;
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Deserialize)]
 pub struct Settings {
     pub(crate) port: Option<u16>,
+    pub(crate) relying_party_domain: Url,
     pub(crate) database_url: Option<Url>,
     pub(crate) database_schema: Option<String>,
 }
@@ -13,9 +14,7 @@ pub struct Settings {
 impl Settings {
     pub fn from_env() -> Self {
         if cfg!(debug_assertions) {
-            dotenvy::dotenv().expect(
-                ".env file in the project root is required to configure the app for development",
-            );
+            dotenvy::dotenv().ok();
         }
         let config = config::Config::builder()
             .add_source(config::Environment::default())
@@ -45,14 +44,6 @@ impl Settings {
 mod tests {
     use super::*;
     use config::ConfigError;
-
-    #[test]
-    fn default_config() {
-        let settings: Settings = config::Config::default().try_deserialize().unwrap();
-        assert_eq!(settings.port, None);
-        assert_eq!(settings.database_url, None);
-        assert_eq!(settings.database_schema, None)
-    }
 
     #[test]
     fn database_url_default() {

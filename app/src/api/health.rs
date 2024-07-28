@@ -4,6 +4,8 @@
 use axum::{routing::get, Json, Router};
 use serde_json::json;
 
-pub(crate) fn router() -> Router {
+use crate::app::AppContext;
+
+pub(crate) fn router() -> Router<AppContext> {
     Router::new().route("/health", get(|| async { Json(json!({ "status": "✅" })) }))
 }

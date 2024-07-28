@@ -1,19 +1,23 @@
 // © Copyright 2024 the cozyauth developers
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-use sqlx::{migrate::Migrator, Pool, Postgres};
+use sqlx::{migrate::Migrator, PgPool};
 
 use crate::config::Settings;
 
 static MIGRATOR: Migrator = sqlx::migrate!();
 
-pub(crate) async fn migrate(settings: &Settings) {
+pub(crate) async fn create_pool(settings: &Settings) -> PgPool {
     let url = settings.database_url();
-    match Pool::<Postgres>::connect(url.as_str()).await {
-        Ok(pool) => match MIGRATOR.run(&pool).await {
-            Ok(_) => println!("✅ database has been migrated"),
-            Err(e) => panic!("{}", e),
-        },
+    PgPool::connect(url.as_str())
+        .await
+        .expect("cannot create database pool")
+}
+
+pub(crate) async fn migrate(settings: &Settings) {
+    let pool = create_pool(settings).await;
+    match MIGRATOR.run(&pool).await {
+        Ok(_) => println!("✅ database has been migrated"),
         Err(e) => panic!("{}", e),
     }
 }
