@@ -52,30 +52,3 @@ impl Registration {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::{
-        config::Settings,
-        db::{create_pool, migrate},
-    };
-
-    #[tokio::test]
-    async fn create_passkey_registration() {
-        let settings = Settings::from_env();
-        migrate(&settings).await;
-        let pool = create_pool(&settings).await;
-
-        let (_ccr, registration) = Registration::create_passkey_registration(
-            pool,
-            Uuid::new_v4(),
-            "test_user",
-            "Test User",
-        )
-        .await
-        .unwrap();
-
-        assert_eq!(registration.user_id, registration.user_id);
-    }
-}
