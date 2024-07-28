@@ -2,5 +2,8 @@
 .DS_Store
 *.pem
 
+# Local configuration
+.env
+
 # Rust build artifacts
 /target

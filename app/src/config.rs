@@ -14,9 +14,7 @@ pub struct Settings {
 impl Settings {
     pub fn from_env() -> Self {
         if cfg!(debug_assertions) {
-            dotenvy::dotenv().expect(
-                ".env file in the project root is required to configure the app for development",
-            );
+            dotenvy::dotenv().ok();
         }
         let config = config::Config::builder()
             .add_source(config::Environment::default())
