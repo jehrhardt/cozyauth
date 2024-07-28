@@ -39,8 +39,8 @@ jobs:
       - name: Check sqlx files
         run: |
           cargo install sqlx-cli
-          sqlx migrate run --source app/migrations
-          cargo sqlx prepare --workspace --check
+          sqlx migrate run
+          cargo sqlx prepare --check
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
       - name: Linting
