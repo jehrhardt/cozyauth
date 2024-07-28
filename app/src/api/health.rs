@@ -3,8 +3,9 @@
 
 use axum::{routing::get, Json, Router};
 use serde_json::json;
+use sqlx::PgPool;
 
-pub(crate) fn router() -> Router {
+pub(crate) fn router() -> Router<PgPool> {
     Router::new().route("/health", get(|| async { Json(json!({ "status": "✅" })) }))
 }
 

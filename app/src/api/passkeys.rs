@@ -1,11 +1,13 @@
 // © Copyright 2024 the cozyauth developers
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router};
 use serde::{Deserialize, Serialize};
+use serde_json::json;
+use sqlx::PgPool;
 use uuid::Uuid;
-use webauthn_rs::prelude::*;
-use webauthn_rs_proto::PublicKeyCredentialCreationOptions;
+
+use crate::model::registration::Registration;
 
 #[derive(Serialize, Deserialize)]
 struct CreationParams {
@@ -20,45 +22,31 @@ struct User {
     display_name: Option<String>,
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct Registration {
-    id: Uuid,
-    public_key_credential_creation_options: PublicKeyCredentialCreationOptions,
-}
-
-async fn create(Json(creation_params): Json<CreationParams>) -> impl IntoResponse {
-    let rp_id = "localhost";
-    let rp_origin = Url::parse("http://localhost")
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
-        .unwrap();
-
-    let builder = WebauthnBuilder::new(rp_id, &rp_origin)
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
-        .unwrap();
-
-    let webauthn = builder
-        .build()
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
-        .unwrap();
-
+async fn create(
+    State(pool): State<PgPool>,
+    Json(creation_params): Json<CreationParams>,
+) -> impl IntoResponse {
     let user = creation_params.user;
     let user_name = user.name.as_str();
     let user_display_name = user.display_name.unwrap_or_else(|| user_name.to_string());
 
-    match webauthn.start_passkey_registration(user.id, user_name, &user_display_name, None) {
-        Ok((ccr, _skr)) => {
-            let registration = Registration {
-                id: user.id,
-                public_key_credential_creation_options: ccr.public_key,
-            };
-            (StatusCode::OK, Json(registration)).into_response()
-        }
+    match Registration::create_passkey_registration(pool, user.id, user_name, &user_display_name)
+        .await
+    {
+        Ok((credential_creation_options, registration)) => (
+            StatusCode::OK,
+            Json(json!({
+                "id": registration.id,
+                "publicKeyCredentialCreationOptions": credential_creation_options,
+                "expiresAt": registration.expires_at,
+            })),
+        )
+            .into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
 }
 
-pub(crate) fn router() -> Router {
+pub(crate) fn router() -> Router<PgPool> {
     Router::new().route("/registrations", post(create))
 }
 

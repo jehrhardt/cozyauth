@@ -11,13 +11,8 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use crate::{
     api::{health, passkeys},
     config::Settings,
+    db,
 };
-
-fn router() -> Router {
-    Router::new()
-        .merge(health::router())
-        .nest("/passkeys", passkeys::router())
-}
 
 pub(crate) async fn start_server(settings: &Settings) {
     tracing_subscriber::registry()
@@ -27,6 +22,11 @@ pub(crate) async fn start_server(settings: &Settings) {
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
+    let pool = db::create_pool(settings).await;
+    let app = Router::new()
+        .merge(health::router())
+        .nest("/passkeys", passkeys::router())
+        .with_state(pool);
     let ip_address: IpAddr = if cfg!(debug_assertions) {
         Ipv4Addr::LOCALHOST.into()
     } else {
@@ -35,7 +35,7 @@ pub(crate) async fn start_server(settings: &Settings) {
     let socket_address = SocketAddr::new(ip_address, settings.port.unwrap_or(3000));
     let listener = TcpListener::bind(&socket_address).await.unwrap();
     info!("Listening on {}", socket_address);
-    axum::serve(listener, router().into_make_service())
+    axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal())
         .await
         .unwrap()

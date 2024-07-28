@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use sqlx::{types::Json, Pool, Postgres};
+use sqlx::{types::Json, PgPool};
 use uuid::Uuid;
 use webauthn_rs::prelude::*;
 use webauthn_rs_proto::PublicKeyCredentialCreationOptions;
@@ -17,7 +17,7 @@ pub(crate) struct Registration {
 
 impl Registration {
     pub(crate) async fn create_passkey_registration(
-        pool: Pool<Postgres>,
+        pool: PgPool,
         user_id: Uuid,
         user_name: &str,
         user_display_name: &str,
