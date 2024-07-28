@@ -32,7 +32,7 @@ pub async fn run() {
     let args = Cli::parse();
     let settings = Settings::from_env();
     match args.command {
-        Commands::Server => start_server(&settings).await,
+        Commands::Server => start_server(settings).await,
         Commands::Migrate => migrate(&settings).await,
     }
 }

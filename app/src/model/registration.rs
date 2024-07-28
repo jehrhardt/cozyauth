@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use sqlx::{prelude::FromRow, types::Json, PgPool};
+use url::Url;
 use uuid::Uuid;
 use webauthn_rs::prelude::PasskeyRegistration;
 use webauthn_rs_proto::{PublicKeyCredentialCreationOptions, RegisterPublicKeyCredential};
@@ -33,11 +34,12 @@ pub(crate) enum RegistrationError {
 impl Registration {
     pub(crate) async fn create_passkey_registration(
         pool: &PgPool,
+        relying_party_domain: &Url,
         user_id: Uuid,
         user_name: &str,
         user_display_name: &str,
     ) -> Result<(PublicKeyCredentialCreationOptions, Self), RegistrationError> {
-        match webauthn_utils::init() {
+        match webauthn_utils::init(relying_party_domain) {
             Ok(webauthn) => {
                 match webauthn.start_passkey_registration(user_id, user_name, user_display_name, None) {
                 Ok((credential_creation_options, reg_state)) => {
@@ -86,9 +88,10 @@ impl Registration {
     pub(crate) async fn confirm(
         &self,
         pool: &PgPool,
+        relying_party_domain: &Url,
         credential: &RegisterPublicKeyCredential,
     ) -> Result<(), RegistrationError> {
-        match webauthn_utils::init() {
+        match webauthn_utils::init(relying_party_domain) {
             Ok(webauthn) => {
                 match webauthn.finish_passkey_registration(credential, &self.reg_state) {
                     Ok(passkey) => match pool.begin().await {

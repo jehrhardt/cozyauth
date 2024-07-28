@@ -14,7 +14,13 @@ use crate::{
     db,
 };
 
-pub(crate) async fn start_server(settings: &Settings) {
+#[derive(Clone)]
+pub(crate) struct AppContext {
+    pub(crate) pool: sqlx::PgPool,
+    pub(crate) settings: Settings,
+}
+
+pub(crate) async fn start_server(settings: Settings) {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
@@ -22,17 +28,19 @@ pub(crate) async fn start_server(settings: &Settings) {
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
-    let pool = db::create_pool(settings).await;
+    let port = settings.port.unwrap_or(3000);
+    let pool = db::create_pool(&settings).await;
+    let app_context = AppContext { pool, settings };
     let app = Router::new()
         .merge(health::router())
         .nest("/passkeys", passkeys::router())
-        .with_state(pool);
+        .with_state(app_context);
     let ip_address: IpAddr = if cfg!(debug_assertions) {
         Ipv4Addr::LOCALHOST.into()
     } else {
         Ipv4Addr::UNSPECIFIED.into()
     };
-    let socket_address = SocketAddr::new(ip_address, settings.port.unwrap_or(3000));
+    let socket_address = SocketAddr::new(ip_address, port);
     let listener = TcpListener::bind(&socket_address).await.unwrap();
     info!("Listening on {}", socket_address);
     axum::serve(listener, app)
