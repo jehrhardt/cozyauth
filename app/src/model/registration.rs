@@ -7,17 +7,13 @@ use webauthn_rs_proto::PublicKeyCredentialCreationOptions;
 #[derive(sqlx::FromRow)]
 pub(crate) struct Registration {
     pub(crate) id: Uuid,
-    user_id: Uuid,
     reg_state: Json<PasskeyRegistration>,
     pub(crate) expires_at: DateTime<Utc>,
-    confirmed_at: Option<DateTime<Utc>>,
-    created_at: Option<DateTime<Utc>>,
-    updated_at: Option<DateTime<Utc>>,
 }
 
 impl Registration {
     pub(crate) async fn create_passkey_registration(
-        pool: PgPool,
+        pool: &PgPool,
         user_id: Uuid,
         user_name: &str,
         user_display_name: &str,
@@ -36,16 +32,68 @@ impl Registration {
                     r#"
                     insert into registrations(user_id, reg_state, expires_at)
                     values ($1, $2, $3)
-                    returning id, user_id, reg_state as "reg_state: Json<PasskeyRegistration>", expires_at, confirmed_at, created_at, updated_at
+                    returning id, reg_state as "reg_state: Json<PasskeyRegistration>", expires_at
                    "#,
                     user_id,
                     Json(reg_state) as _,
                     Utc::now() + chrono::Duration::minutes(60),
                 )
-                .fetch_one(&pool)
-                .await {
+                .fetch_one(pool)
+                .await
+                {
                     Ok(registration) => Ok((credential_creation_options.public_key, registration)),
-                    Err(_) => return Err(()),
+                    Err(_) => Err(()),
+                }
+            }
+            Err(_) => Err(()),
+        }
+    }
+
+    pub(crate) async fn find_unconfirmed_by_id(
+        pool: &PgPool,
+        id: Uuid,
+    ) -> Result<Self, sqlx::Error> {
+        sqlx::query_as!(
+            Registration,
+            r#"
+            select id, reg_state as "reg_state: Json<PasskeyRegistration>", expires_at
+            from registrations
+            where id = $1 and confirmed_at is null
+            "#,
+            id
+        )
+        .fetch_one(pool)
+        .await
+    }
+
+    pub(crate) async fn confirm(
+        &self,
+        pool: &PgPool,
+        credential: &RegisterPublicKeyCredential,
+    ) -> Result<Self, ()> {
+        let rp_id = "localhost";
+        let rp_origin = Url::parse("http://localhost").map_err(|_| ())?;
+
+        let builder = WebauthnBuilder::new(rp_id, &rp_origin).map_err(|_| ())?;
+        let webauthn = builder.build().map_err(|_| ())?;
+
+        match webauthn.finish_passkey_registration(credential, &self.reg_state) {
+            Ok(_) => {
+                match sqlx::query_as!(
+                    Registration,
+                    r#"
+                    update registrations
+                    set confirmed_at = now()
+                    where id = $1
+                    returning id, reg_state as "reg_state: Json<PasskeyRegistration>", expires_at
+                    "#,
+                    self.id,
+                )
+                .fetch_one(pool)
+                .await
+                {
+                    Ok(registration) => Ok(registration),
+                    Err(_) => Err(()),
                 }
             }
             Err(_) => Err(()),
