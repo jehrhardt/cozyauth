@@ -1,1 +1,1 @@
-drop table registrations;
+drop table if exists registrations;
