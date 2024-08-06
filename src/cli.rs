@@ -1,6 +1,6 @@
 use clap::{Args, Parser, Subcommand};
 
-use crate::{app::start_server, config::Settings, db::migrate};
+use crate::{app::start_server, config::Settings, db};
 
 #[derive(Debug, Parser)]
 #[command(name = "cozyauth")]
@@ -35,6 +35,12 @@ enum DbCommands {
             An optional database schema name can be provided via the DATABASE_SCHEMA environment variable."
     )]
     Migrate,
+    #[command(
+        about = "Init Postgres database to store Passkeys",
+        long_about = "Init Postgres database to store Passkeys. It creates a separate schema and Postgres user to store Passkeys in.\n
+            It will also apply all database migrations to the latest version."
+    )]
+    Init,
 }
 
 pub async fn run() {
@@ -43,7 +49,8 @@ pub async fn run() {
     match args.command {
         Commands::Server => start_server(settings).await,
         Commands::Db(db) => match db.command {
-            DbCommands::Migrate => migrate(&settings).await,
+            DbCommands::Init => db::init().await,
+            DbCommands::Migrate => db::migrate(&settings).await,
         },
     }
 }
