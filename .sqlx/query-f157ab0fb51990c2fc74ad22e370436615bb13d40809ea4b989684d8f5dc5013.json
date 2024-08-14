@@ -1,0 +1,42 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                        insert into registrations(user_id, reg_state, expires_at)\n                        values ($1, $2, $3)\n                        returning id, user_id, reg_state as \"reg_state: Json<webauthn_rs::prelude::PasskeyRegistration>\", expires_at\n                        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "reg_state: Json<webauthn_rs::prelude::PasskeyRegistration>",
+        "type_info": "Jsonb"
+      },
+      {
+        "ordinal": 3,
+        "name": "expires_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Jsonb",
+        "Timestamptz"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "f157ab0fb51990c2fc74ad22e370436615bb13d40809ea4b989684d8f5dc5013"
+}
