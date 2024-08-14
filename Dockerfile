@@ -14,8 +14,12 @@
 FROM hexpm/elixir:1.17.2-erlang-27.0.1-ubuntu-noble-20240605 AS builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
+RUN apt-get update -y && apt-get install -y build-essential git curl libssl-dev pkg-config \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+# install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # prepare build dir
 WORKDIR /app
@@ -43,6 +47,8 @@ COPY priv priv
 COPY lib lib
 
 COPY assets assets
+
+COPY native native
 
 # compile assets
 RUN mix assets.deploy
