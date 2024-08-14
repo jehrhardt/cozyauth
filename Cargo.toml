@@ -1,0 +1,41 @@
+[package]
+name = "cozyauth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.7.5"
+chrono = { version = "0.4.38", default-features = false, features = [
+  "now",
+  "serde",
+] }
+clap = { version = "4.5.15", features = ["derive"] }
+config = { version = "0.14.0", default-features = false }
+dotenvy = "0.15.7"
+serde = { version = "1.0.206", features = ["derive"] }
+serde_json = "1.0.124"
+sqlx = { version = "0.8.0", features = [
+  "chrono",
+  "json",
+  "runtime-tokio",
+  "postgres",
+  "tls-rustls",
+  "uuid",
+] }
+thiserror = "1.0.63"
+tokio = { version = "1.39.1", features = ["full"] }
+tower-cookies = { version = "0.10.0", features = ["private", "signed"] }
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+url = { version = "2.5.2", features = ["serde"] }
+uuid = { version = "1.10.0", features = ["v4", "serde"] }
+webauthn-rs = { version = "0.5.0", features = ["danger-allow-state-serialisation", "danger-credential-internals"] }
+webauthn-rs-proto = "0.5.0"
+
+[dev-dependencies]
+base64 = "0.22.1"
+http-body-util = "0.1.2"
+mime = "0.3.17"
+rand = "0.8.5"
+sha256 = "1.5.0"
+tower = { version = "0.4.13", features = ["util"] }
