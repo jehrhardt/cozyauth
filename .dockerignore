@@ -44,6 +44,5 @@ erl_crash.dump
 /priv/static/assets/
 /priv/static/cache_manifest.json
 
-# Native artifacts
-/priv/native/
-/native/cozyauth_native/target/
+# Rust build artifacts
+/target/
