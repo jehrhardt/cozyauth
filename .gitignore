@@ -35,3 +35,5 @@ cozyauth-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Rustler compiled NIFs
+priv/native/
