@@ -39,7 +39,7 @@ jobs:
         with:
           components: rustfmt,clippy
       - name: Set up Elixir
-        uses: erlef/setup-beam@b9c58b0450cd832ccdb3c17cc156a47065d2114f
+        uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21
         with:
           elixir-version: '1.17.2'
           otp-version: '27.0.1'
