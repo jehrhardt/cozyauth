@@ -8,7 +8,7 @@ RUN apk add --no-cache \
 
 COPY . .
 
-RUN RUSTFLAGS="-C target-feature=-crt-static" cargo build --release --bin cozyauth
+RUN RUSTFLAGS="-C target-feature=-crt-static" cargo build --release --bin cozyauth-server
 
 FROM alpine:3.20
 
@@ -20,6 +20,6 @@ RUN apk add --no-cache \
   libgcc \
   openssl
 
-COPY --from=builder /app/target/release/cozyauth /usr/local/bin/cozyauth
+COPY --from=builder /app/target/release/cozyauth-server /usr/local/bin/cozyauth
 
 USER nobody
