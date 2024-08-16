@@ -1,5 +1,5 @@
 [workspace]
-members = ["ee/cloud", "server"]
+members = [ "cli","ee/cloud", "server"]
 resolver = "2"
 
 [workspace.dependencies]
