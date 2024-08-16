@@ -55,7 +55,10 @@ jobs:
           RELYING_PARTY_DOMAIN: https://cozyauth.dev
 
   build-image:
-    name: Build container image for cozyauth
+    name: Build container image for ${{ matrix.binary }}
+    strategy:
+      matrix:
+        binary: [cozyauth-server, cozyauth-cloud]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,6 +73,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          build-args: |
+            BINARY=${{ matrix.binary }}
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
