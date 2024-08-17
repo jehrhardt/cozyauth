@@ -10,10 +10,10 @@ env:
 
 jobs:
   push-image:
-    name: Build and publish container image for ${{ matrix.binary }}
+    name: Build and publish container image for cozyauth-${{ matrix.binary }}
     strategy:
       matrix:
-        binary: [cozyauth-server]
+        binary: [cli, server]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,13 +32,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.binary }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           build-args: |
-            BINARY=${{ matrix.binary }}
+            BINARY=cozyauth-${{ matrix.binary }}
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
