@@ -1,20 +1,20 @@
-# © Copyright 2024 Cozy Bytes GmbH
-
 header:
   - license:
-      spdx-id: Apache-2.0
+      spdx-id: AGPL-3.0-or-later
       copyright-owner: Cozy Auth Contributors
       copyright-year: "2024"
+      software-name: cozyauth
     paths-ignore:
       - ".dockerignore"
       - ".editorconfig"
       - ".env-example"
       - "Dockerfile"
-      - "Cargo.lock"
+      - "mix.exs"
+      - "mix.lock"
       - ".gitignore"
       - "LICENSE"
       - "README.md"
-      - ".sqlx/**"
+      - ".licenserc.yaml"
       - "ee/**"
       - "rel/**"
       - "priv/static/**"
