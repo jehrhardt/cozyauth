@@ -11,7 +11,7 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.17.2-erlang-27.0.1-debian-bullseye-20240812-slim
 #
-FROM hexpm/elixir:1.17.2-erlang-27.0.1-ubuntu-noble-20240605 AS builder
+FROM hexpm/elixir:1.17.2-erlang-27.0.1-ubuntu-noble-20240801 AS builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git curl libssl-dev pkg-config \
