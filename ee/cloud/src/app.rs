@@ -1,5 +1,3 @@
-// © Copyright 2024 Cozy Bytes GmbH
-
 use std::env;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
 
