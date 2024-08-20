@@ -3,6 +3,7 @@ use clap::{Parser, Subcommand};
 use crate::{app::start_server, config::Settings, db::migrate};
 
 #[derive(Debug, Parser)]
+#[command(name = "cozyauth")]
 #[command(about = "Easy Passkey authentication for Supabase and Postgres", long_about = None)]
 struct Cli {
     #[command(subcommand)]

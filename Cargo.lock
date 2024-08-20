@@ -516,27 +516,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 
 [[package]]
-name = "cozyauth-cli"
-version = "0.1.0"
-dependencies = [
- "clap",
- "tokio",
-]
-
-[[package]]
-name = "cozyauth-cloud"
-version = "0.1.0"
-dependencies = [
- "axum",
- "clap",
- "serde_json",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "cozyauth-server"
+name = "cozyauth"
 version = "0.1.0"
 dependencies = [
  "axum",
@@ -1807,9 +1787,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.125"
+version = "1.0.124"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83c8e735a073ccf5be70aa8066aa984eaf2fa000db6c8d0100ae605b366d31ed"
+checksum = "66ad62847a56b3dba58cc891acd13884b9c61138d330c0d7b6181713d4fce38d"
 dependencies = [
  "itoa",
  "memchr",

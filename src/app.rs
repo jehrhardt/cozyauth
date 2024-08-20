@@ -1,12 +1,15 @@
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
-use axum::{routing::get, Json, Router};
-use serde_json::json;
+use axum::Router;
 use tokio::{net::TcpListener, signal};
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-use crate::{api::passkeys, config::Settings, db};
+use crate::{
+    api::{health, passkeys},
+    config::Settings,
+    db,
+};
 
 #[derive(Clone)]
 pub(crate) struct AppContext {
@@ -26,7 +29,7 @@ pub(crate) async fn start_server(settings: Settings) {
     let pool = db::create_pool(&settings).await;
     let app_context = AppContext { pool, settings };
     let app = Router::new()
-        .route("/health", get(|| async { Json(json!({ "status": "✅" })) }))
+        .merge(health::router())
         .nest("/passkeys", passkeys::router())
         .with_state(app_context);
     let ip_address: IpAddr = if cfg!(debug_assertions) {
