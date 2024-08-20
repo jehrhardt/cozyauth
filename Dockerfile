@@ -64,7 +64,7 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM ubuntu:noble-20240605
+FROM ubuntu:noble-20240801
 
 RUN apt-get update -y && \
   apt-get install -y libstdc++6 openssl libncurses6 locales ca-certificates \
