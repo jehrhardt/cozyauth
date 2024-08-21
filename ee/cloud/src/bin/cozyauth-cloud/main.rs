@@ -1,8 +1,8 @@
 // © Copyright 2024 Cozy Bytes GmbH
 
-use cozyauth_cloud::app;
+use cozyauth_cloud::cli;
 
 #[tokio::main]
 async fn main() {
-    app::run().await;
+    cli::run().await;
 }
