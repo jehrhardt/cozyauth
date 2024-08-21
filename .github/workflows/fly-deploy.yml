@@ -8,7 +8,8 @@ jobs:
   deploy:
     name: Deploy cozyauth
     runs-on: ubuntu-latest
-    concurrency: deploy-group    # optional: ensure only one action runs at a time
+    environment: production
+    concurrency: production
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
