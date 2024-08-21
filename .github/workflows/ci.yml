@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
-
 env:
   CARGO_TERM_COLOR: always
   REGISTRY: ghcr.io
@@ -34,36 +31,34 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt,clippy
-      - name: Set up Elixir
-        uses: erlef/setup-beam@b9c58b0450cd832ccdb3c17cc156a47065d2114f
-        with:
-          elixir-version: '1.17.2'
-          otp-version: '27.0.1'
-      - name: Restore dependencies cache
-        uses: actions/cache@v4
-        with:
-          path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
-      - name: Install dependencies
-        run: mix deps.get
-      - name: Enforce Elixir formatting
-        run: mix format --check-formatted
-      - name: Enforce Rust formatting
+      - name: Enforce formatting
         run: cargo fmt --check
-        working-directory: native/cozyauth_native
-      - name: Rust linting
+      - name: Check sqlx files
+        run: |
+          cargo install sqlx-cli
+          sqlx migrate run --source server/migrations
+          cargo sqlx prepare --workspace --check
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
+      - name: Linting
         run: cargo clippy
-        working-directory: native/cozyauth_native
+      - name: Build tests
+        run: cargo test --no-run
       - name: Run tests
-        run: mix test
+        run: |
+          cargo test
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
+          RELYING_PARTY_DOMAIN: https://cozyauth.dev
 
   build-image:
-    name: Build container image for cozyauth
+    name: Build container image for cozyauth-${{ matrix.binary }}
+    strategy:
+      matrix:
+        binary: [cli, cloud, server]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -73,11 +68,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.binary }}
       - name: Build
         uses: docker/build-push-action@v6
         with:
           context: .
+          build-args: |
+            BINARY=cozyauth-${{ matrix.binary }}
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
