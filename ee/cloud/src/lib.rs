@@ -1,3 +1,4 @@
 // © Copyright 2024 Cozy Bytes GmbH
 
-pub mod app;
+mod app;
+pub mod cli;
