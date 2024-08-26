@@ -12,7 +12,7 @@ chrono = { version = "0.4.38", default-features = false, features = [
 clap = { workspace = true, features = ["derive"] }
 config = { version = "0.14.0", default-features = false }
 dotenvy = "0.15.7"
-serde = { version = "1.0.208", features = ["derive"] }
+serde = { version = "1.0.209", features = ["derive"] }
 serde_json.workspace = true
 sqlx = { version = "0.8.0", features = [
   "chrono",
