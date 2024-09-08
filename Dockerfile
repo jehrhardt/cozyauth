@@ -28,6 +28,9 @@ WORKDIR /app
 RUN mix local.hex --force && \
   mix local.rebar --force
 
+# download Supabase SSL ca-certificate
+RUN curl -L https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/prod-ca-2021.crt -o prod-ca-2021.crt
+
 # set build ENV
 ENV MIX_ENV="prod"
 
@@ -83,7 +86,8 @@ RUN chown nobody /app
 # set runner ENV
 ENV MIX_ENV="prod"
 
-# Only copy the final release from the build stage
+# Only copy the final release and certificates from the build stage
+COPY --from=builder --chown=nobody:root /app/prod-ca-2021.crt ./
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/cozyauth ./
 
 USER nobody

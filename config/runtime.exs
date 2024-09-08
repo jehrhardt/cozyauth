@@ -29,9 +29,11 @@ if config_env() == :prod do
       """
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
+  tls_cert = System.get_env("DATABASE_TLS_CERT")
+  maybe_tls_cert = if tls_cert, do: [cacertfile: tls_cert], else: false
 
   config :cozyauth, CozyAuth.Repo,
-    # ssl: true,
+    ssl: maybe_tls_cert,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
