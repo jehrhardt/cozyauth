@@ -13,6 +13,7 @@ If you want to try it out, you can do so by following the instructions below.
 To run it locally you need to have the following tools installed:
 
 - [Docker](https://docs.docker.com/get-docker/)
+- [Elixir](https://elixir-lang.org/install.html)
 
 ### Development
 
@@ -25,17 +26,17 @@ docker compose up -d
 Apply database migrations:
 
 ```bash
-cargo run migrate
+mix setup
 ```
 
 Start the server locally:
 
 ```bash
-cargo run server
+mix phx.server
 ```
 
 Check the server is running with:
 
 ```bash
-curl http://localhost:3000/health
+curl http://localhost:4000/health
 ```
