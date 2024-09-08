@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 env:
   CARGO_TERM_COLOR: always
   REGISTRY: ghcr.io
@@ -31,34 +34,30 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt,clippy
+      - name: Set up Elixir
+        uses: erlef/setup-beam@61e01a43a562a89bfc54c7f9a378ff67b03e4a21
+        with:
+          elixir-version: '1.17.2'
+          otp-version: '27'
+      - name: Restore dependencies cache
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+      - name: Install dependencies
+        run: mix deps.get
       - name: Enforce formatting
-        run: cargo fmt --check
-      - name: Check sqlx files
-        run: |
-          cargo install sqlx-cli
-          sqlx migrate run --source server/migrations
-          cargo sqlx prepare --workspace --check
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
-      - name: Linting
-        run: cargo clippy
-      - name: Build tests
-        run: cargo test --no-run
+        run: mix format --check-formatted
       - name: Run tests
-        run: |
-          cargo test
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost/cozyauth_test
-          RELYING_PARTY_DOMAIN: https://cozyauth.dev
+        run: mix test
 
   build-image:
-    name: Build container image for cozyauth-${{ matrix.binary }}
-    strategy:
-      matrix:
-        binary: [cli, cloud, server]
+    name: Build container image for cozyauth
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -68,21 +67,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.binary }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build
         uses: docker/build-push-action@v6
         with:
           context: .
-          build-args: |
-            BINARY=cozyauth-${{ matrix.binary }}
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-  check-license-header:
-    name: Check License Headers
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check License Header
-        uses: apache/skywalking-eyes/header@v0.6.0
