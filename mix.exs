@@ -59,7 +59,7 @@ defmodule CozyAuth.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
-      {:rustler, "~> 0.34.0", runtime: false}
+      {:rustler, "~> 0.35.1", runtime: false}
     ]
   end
 
