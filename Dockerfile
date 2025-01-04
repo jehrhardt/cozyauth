@@ -11,15 +11,11 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.17.2-erlang-27.0.1-debian-bullseye-20240812-slim
 #
-FROM hexpm/elixir:1.17.2-erlang-27.0.1-ubuntu-noble-20240801 AS builder
+FROM hexpm/elixir:1.18.1-erlang-27.2-ubuntu-noble-20241118.1 AS builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git curl libssl-dev pkg-config \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
-
-# install Rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
 
 # prepare build dir
 WORKDIR /app
@@ -27,9 +23,6 @@ WORKDIR /app
 # install hex + rebar
 RUN mix local.hex --force && \
   mix local.rebar --force
-
-# download Supabase SSL ca-certificate
-RUN curl -L https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/prod-ca-2021.crt -o prod-ca-2021.crt
 
 # set build ENV
 ENV MIX_ENV="prod"
@@ -51,8 +44,6 @@ COPY priv priv
 COPY lib lib
 
 COPY assets assets
-
-COPY native native
 
 # compile assets
 RUN mix assets.deploy
@@ -88,7 +79,6 @@ RUN chown nobody /app
 ENV MIX_ENV="prod"
 
 # Only copy the final release and certificates from the build stage
-COPY --from=builder --chown=nobody:root /app/prod-ca-2021.crt ./
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/cozyauth ./
 
 USER nobody
