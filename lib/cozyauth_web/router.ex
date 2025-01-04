@@ -1,29 +1,13 @@
 defmodule CozyAuthWeb.Router do
   use CozyAuthWeb, :router
 
-  pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {CozyAuthWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-  end
-
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/", CozyAuthWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
+  scope "/api", CozyAuthWeb do
+    pipe_through :api
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", CozyAuthWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:cozyauth, :dev_routes) do
@@ -35,7 +19,7 @@ defmodule CozyAuthWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through [:fetch_session, :protect_from_forgery]
 
       live_dashboard "/dashboard", metrics: CozyAuthWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
