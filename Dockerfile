@@ -1,5 +1,5 @@
 # builder stage to build an Elixir release
-FROM hexpm/elixir:1.18.1-erlang-27.2-alpine-3.21.0 AS builder
+FROM hexpm/elixir:1.18.1-erlang-27.2-ubuntu-noble-20241118.1 AS builder
 
 # prepare build dir
 WORKDIR /app
