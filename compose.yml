@@ -1,4 +1,15 @@
 services:
+  app:
+    build: .
+    environment:
+      DATABASE_URL: ecto://postgres:postgres@db/cozyauth_dev
+      SECRET_KEY_BASE: "tpO45Rky2cCUW/5ehr5CWVAf6d/Huv7lPwnb9Ta8VF5YveY3FbZs8tql300wSepJ"
+    ports:
+      - "127.0.0.1:4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
     image: postgres:15-alpine
     environment:
@@ -7,3 +18,9 @@ services:
       POSTGRES_DB: cozyauth_dev
     ports:
       - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

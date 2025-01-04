@@ -20,7 +20,7 @@ To run it locally you need to have the following tools installed:
 Start Postgres:
 
 ```bash
-docker compose up -d
+docker compose up -d db
 ```
 
 Apply database migrations:
