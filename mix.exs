@@ -5,7 +5,7 @@ defmodule CozyAuth.MixProject do
     [
       app: :cozyauth,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
