@@ -38,7 +38,7 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM alpine:3.21.1
+FROM alpine:3.21.2
 
 WORKDIR "/app"
 RUN apk add --no-cache \
